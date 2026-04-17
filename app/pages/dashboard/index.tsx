@@ -7,8 +7,8 @@ export interface DashboardPageData {
 
 const dashboardPageData: DashboardPageData = {
   seo: {
-    title: "鲸选工作台 - Dashboard",
-    description: "鲸选数据工作台空页面。",
+    title: "灵犀工作台 - Dashboard",
+    description: "灵犀数据工作台空页面。",
   },
 };
 

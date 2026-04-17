@@ -94,12 +94,12 @@ interface HomePageData {
 
 const homePageData: HomePageData = {
   seo: {
-    title: "鲸选数据 - 短视频&直播电商数据分析平台",
+    title: "灵犀数据 - 短视频&直播电商数据分析平台",
     description:
-      "鲸选数据聚焦短视频与直播电商场景，提供达人、商品、直播间与内容趋势的多维分析能力。",
+      "灵犀数据聚焦短视频与直播电商场景，提供达人、商品、直播间与内容趋势的多维分析能力。",
   },
   hero: {
-    badge: "鲸选数据 · 内容电商增长驾驶舱",
+    badge: "灵犀数据 · 内容电商增长驾驶舱",
     title: "面向品牌、商家与机构的",
     highlight: "短视频&直播电商数据分析平台",
     description:
@@ -720,9 +720,9 @@ export function HomePage({ data }: HomePageProps) {
                 <Radar className="size-5" />
               </div>
               <div>
-                <p className="text-base font-semibold text-slate-950">鲸选数据</p>
+                <p className="text-base font-semibold text-slate-950">灵犀数据</p>
                 <p className="text-xs tracking-[0.2em] text-slate-500">
-                  JINGXUAN DATA
+                  LINGXI DATA
                 </p>
               </div>
             </div>
