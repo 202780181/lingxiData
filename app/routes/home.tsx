@@ -1,13 +1,14 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import { getHomeMeta, HomePage, loadHomePageData } from "@/pages/home";
 
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
-  ];
+export async function clientLoader(_args: Route.ClientLoaderArgs) {
+  return loadHomePageData();
 }
 
-export default function Home() {
-  return <Welcome />;
+export function meta({ data }: Route.MetaArgs) {
+  return getHomeMeta(data);
+}
+
+export default function HomeRoute({ loaderData }: Route.ComponentProps) {
+  return <HomePage data={loaderData} />;
 }
