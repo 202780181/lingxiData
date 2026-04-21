@@ -2,25 +2,17 @@ import * as React from "react";
 import {
   Bell,
   BookOpen,
-  ChevronDown,
-  ChevronRight,
-  Menu,
   Search,
   UserRound,
 } from "lucide-react";
-import { NavLink, Outlet, useLocation, useNavigation } from "react-router";
+import { NavLink, Outlet, useLocation } from "react-router";
 
 import { cn } from "@/lib/utils";
 import {
   dashboardNavGroups,
   dashboardPrimaryItem,
   dashboardSidebarChrome,
-  dashboardTopTabs,
   dashboardUtilityItems,
-  defaultDashboardViewKey,
-  getDashboardViewGroupTitle,
-  getDashboardViewItem,
-  isDashboardViewKey,
   type DashboardNavItem,
 } from "./config";
 
@@ -75,24 +67,7 @@ export function getDashboardMeta(data?: DashboardPageData) {
 
 export function DashboardLayout({ data }: { data: DashboardPageData }) {
   const location = useLocation();
-  const navigation = useNavigation();
   const contentScrollRef = React.useRef<HTMLDivElement>(null);
-
-  const activeView = React.useMemo(() => {
-    const [, dashboardSegment, viewSegment] = location.pathname.split("/");
-
-    if (dashboardSegment !== "dashboard") {
-      return defaultDashboardViewKey;
-    }
-
-    return isDashboardViewKey(viewSegment)
-      ? viewSegment
-      : defaultDashboardViewKey;
-  }, [location.pathname]);
-
-  const activeItem = getDashboardViewItem(activeView);
-  const activeGroupTitle = getDashboardViewGroupTitle(activeView);
-  const isSwitching = navigation.state !== "idle";
   const SidebarActionIcon = dashboardSidebarChrome.collapseIcon;
 
   React.useEffect(() => {
@@ -104,87 +79,47 @@ export function DashboardLayout({ data }: { data: DashboardPageData }) {
       <div className="flex h-full flex-col gap-3 px-3 pb-3 pt-0 lg:gap-3 lg:px-4 lg:pb-4 lg:pt-0">
         <header className="glass-topbar -mx-3 flex shrink-0 flex-col gap-3 rounded-none px-4 py-2 lg:-mx-4 lg:h-[64px] lg:flex-row lg:items-center lg:justify-between lg:px-5">
           <div className="flex min-w-0 items-center gap-4">
-            <div className="flex shrink-0 items-center gap-3">
-              <button
-                type="button"
-                title="展开菜单"
-                className="grid size-9 shrink-0 place-items-center rounded-[11px] text-slate-500 transition-colors hover:bg-white/38 hover:text-slate-900"
-              >
-                <Menu className="size-4.5" strokeWidth={2.1} />
-              </button>
-
-              <div className="flex min-w-0 items-center gap-2.5">
-                <div className="grid size-8 shrink-0 place-items-center rounded-[11px] bg-[linear-gradient(135deg,#586dff_0%,#22c3ff_48%,#2dd4bf_100%)] shadow-[0_12px_26px_rgba(71,114,255,0.24)]">
-                  <div className="flex items-end gap-[2px]">
-                    <span className="h-3 w-1.5 rounded-full bg-white/92" />
-                    <span className="h-4.5 w-1.5 rounded-full bg-white/78" />
-                    <span className="h-3.5 w-1.5 rounded-full bg-white/62" />
-                  </div>
+            <div className="flex min-w-0 items-center gap-2.5 pr-1">
+              <div className="grid size-8 shrink-0 place-items-center rounded-[11px] bg-[linear-gradient(135deg,#586dff_0%,#22c3ff_48%,#2dd4bf_100%)] shadow-[0_12px_26px_rgba(71,114,255,0.24)]">
+                <div className="flex items-end gap-[2px]">
+                  <span className="h-3 w-1.5 rounded-full bg-white/92" />
+                  <span className="h-4.5 w-1.5 rounded-full bg-white/78" />
+                  <span className="h-3.5 w-1.5 rounded-full bg-white/62" />
                 </div>
+              </div>
 
-                <div className="min-w-0">
-                  <p className="truncate text-[15px] font-semibold tracking-[-0.02em] text-slate-900">
-                    灵犀数据
-                  </p>
-                </div>
+              <div className="min-w-0">
+                <p className="truncate text-[15px] font-semibold tracking-[-0.02em] text-slate-900">
+                  灵犀数据
+                </p>
               </div>
             </div>
 
-            <div className="hidden h-8 w-px bg-slate-200/70 lg:block" />
+            <form
+              role="search"
+              onSubmit={(event) => event.preventDefault()}
+              className="glass-search-field hidden h-[42px] min-w-[320px] max-w-[620px] flex-1 items-center gap-2 rounded-[12px] px-3 py-1 text-left lg:flex"
+            >
+              <div className="grid size-6.5 shrink-0 place-items-center rounded-[8px] bg-white/72 text-slate-500 shadow-[inset_0_1px_0_rgba(255,255,255,0.88)]">
+                <Search className="size-3.5" strokeWidth={2} />
+              </div>
 
-            <nav className="hidden items-center gap-5 xl:flex">
-              {dashboardTopTabs.map((tab) => (
-                <NavLink
-                  key={tab.label}
-                  to={tab.href}
-                  className={({ isActive }) =>
-                    cn(
-                      "text-sm font-medium transition-colors",
-                      isActive
-                        ? "text-slate-950"
-                        : "text-slate-500 hover:text-slate-900",
-                    )
-                  }
-                >
-                  {tab.label}
-                </NavLink>
-              ))}
-            </nav>
+              <input
+                type="search"
+                aria-label="搜索达人、视频或品牌"
+                placeholder="搜索达人、视频或品牌"
+                className="glass-search-input min-w-0 flex-1 bg-transparent text-sm font-medium text-slate-700 placeholder:text-slate-500"
+              />
 
-            <div className="hidden h-8 w-px bg-slate-200/70 xl:block" />
-
-            <div className="glass-chip hidden min-w-0 flex-1 items-center gap-3 rounded-[12px] border-white/55 px-3.5 py-2 text-slate-500 lg:flex">
-              <Search className="size-4 shrink-0 text-slate-400" strokeWidth={2} />
-              <span className="truncate text-sm text-slate-500">
-                搜索模型、任务、空间与文档
-              </span>
-            </div>
+              <div className="glass-chip pointer-events-none hidden items-center gap-1 rounded-[7px] border-white/55 px-1.5 py-0.5 text-[10px] font-medium tracking-[0.02em] text-slate-400 xl:flex">
+                <span>Ctrl</span>
+                <span className="text-slate-300">+</span>
+                <span>K</span>
+              </div>
+            </form>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 text-sm lg:ml-6 lg:flex-nowrap">
-            <div className="flex items-center gap-2 text-slate-500">
-              <span className="text-slate-400">{activeGroupTitle}</span>
-              <ChevronRight className="size-3.5 text-slate-300" strokeWidth={2.2} />
-              <span className="font-semibold text-slate-900">{activeItem.label}</span>
-              {isSwitching ? (
-                <span className="rounded-full bg-sky-100/80 px-2 py-0.5 text-[0.68rem] font-semibold text-sky-700">
-                  切换中
-                </span>
-              ) : null}
-            </div>
-
-            <div className="hidden h-6 w-px bg-slate-200/70 lg:block" />
-
-            <div className="glass-chip flex items-center gap-1.5 rounded-[10px] border-white/50 px-3 py-1.5 text-slate-600">
-              <span>{data.workspace.region}</span>
-              <ChevronDown className="size-3.5 text-slate-400" strokeWidth={2.2} />
-            </div>
-
-            <div className="glass-chip flex items-center gap-1.5 rounded-[10px] border-white/50 px-3 py-1.5 text-slate-600">
-              <span>{data.workspace.space}</span>
-              <ChevronDown className="size-3.5 text-slate-400" strokeWidth={2.2} />
-            </div>
-
             <button
               type="button"
               className="glass-chip grid size-8 place-items-center rounded-[10px] text-slate-500 transition-colors hover:text-slate-900"

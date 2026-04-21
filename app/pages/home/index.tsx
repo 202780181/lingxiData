@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { Link } from "react-router";
+import { GooeyHoverCard } from "@/components/unlumen-ui/gooey-hover-card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, type Variants, useScroll, useTransform } from "motion/react";
@@ -104,7 +105,7 @@ const homePageData: HomePageData = {
     highlight: "短视频&直播电商数据分析平台",
     description:
       "参考内容电商数据平台首页的信息架构，围绕达人、商品、直播和内容四条主线，帮助团队更快找到增长机会、验证投放方向并复盘经营结果。",
-    primaryCta: "申请产品演示",
+    primaryCta: "立即注册",
     secondaryCta: "查看能力地图",
     trustTags: [
       "达人库检索",
@@ -704,6 +705,144 @@ interface HomePageProps {
   data: HomePageData;
 }
 
+function GooeyHoverShowcase() {
+  const monitoringItems = [
+    {
+      label: "达人样本池",
+      value: "12.8 万",
+      tone: "info" as const,
+      icon: <Users className="size-3.5" />,
+    },
+    {
+      label: "爆款视频",
+      value: "3,420",
+      tone: "success" as const,
+      icon: <Video className="size-3.5" />,
+    },
+    {
+      label: "品牌监控",
+      value: "26 个",
+      tone: "warning" as const,
+      icon: <Store className="size-3.5" />,
+    },
+  ];
+
+  return (
+    <motion.section
+      variants={staggerContainer}
+      initial="hidden"
+      whileInView="visible"
+      viewport={viewport}
+      className="py-18 md:py-22"
+    >
+      <SectionHeading
+        eyebrow="交互动效"
+        title="把 skiper46 的 gooey hover 交互做成通用组件"
+        description="交互结构按目标组件做了高度还原，但 API 改成了更适合业务复用的形式：既能直接吃数组数据，也能完全自定义浮层内容。"
+      />
+
+      <motion.div variants={staggerContainer} className="mt-10 grid gap-5 lg:grid-cols-2">
+        <motion.article
+          variants={softScaleItem}
+          whileHover={{ y: -6 }}
+          className="rounded-[2rem] border border-slate-200 bg-white/80 p-6 shadow-[0_28px_80px_-50px_rgba(15,23,42,0.32)]"
+        >
+          <div className="flex min-h-[320px] items-center justify-center rounded-[1.75rem] border border-slate-200 bg-[radial-gradient(circle_at_top,#ffffff_0%,#f8fafc_52%,#eef2f7_100%)]">
+            <GooeyHoverCard
+              title="达人数据雷达"
+              meta="实时同步"
+              description="数组模式下，只要把业务字段映射成 label / value 就能直接渲染。"
+              items={monitoringItems}
+              trigger={<Users className="size-4" />}
+              triggerAriaLabel="查看达人数据雷达"
+            />
+          </div>
+
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700">
+              数组驱动
+            </span>
+            <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700">
+              适合接口数据
+            </span>
+            <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700">
+              默认列表布局
+            </span>
+          </div>
+        </motion.article>
+
+        <motion.article
+          variants={softScaleItem}
+          whileHover={{ y: -6 }}
+          className="rounded-[2rem] border border-slate-200 bg-slate-950 p-6 text-white shadow-[0_32px_90px_-55px_rgba(15,23,42,0.48)]"
+        >
+          <div className="flex min-h-[320px] items-center justify-center rounded-[1.75rem] border border-white/10 bg-[radial-gradient(circle_at_top,#1f2937_0%,#111827_52%,#050816_100%)]">
+            <GooeyHoverCard
+              panelWidth={244}
+              trigger={<Sparkles className="size-4" />}
+              triggerAriaLabel="查看自定义 gooey 面板"
+            >
+              <div className="space-y-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-sm tracking-tight text-white/55">
+                      品牌机会卡片
+                    </p>
+                    <p className="mt-1 text-base font-semibold text-white">
+                      完全支持自定义 JSX 内容
+                    </p>
+                  </div>
+                  <span className="rounded-full border border-white/10 bg-white/8 px-2.5 py-1 text-[11px] font-medium text-sky-300">
+                    Custom
+                  </span>
+                </div>
+
+                <p className="text-xs leading-5 text-white/45">
+                  可以放业务摘要、标签、状态、按钮，甚至换成你自己的迷你导航或快捷操作面板。
+                </p>
+
+                <div className="flex flex-wrap gap-2">
+                  {["品牌监测", "热视频", "直播复盘"].map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full bg-white/8 px-2.5 py-1 text-[11px] font-medium text-white/70"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/6 px-3 py-2 text-xs text-white/65">
+                  <span className="flex items-center gap-2">
+                    <Database className="size-3.5" />
+                    支持 Hover / Click
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <MonitorPlay className="size-3.5" />
+                    可直接全局复用
+                  </span>
+                </div>
+              </div>
+            </GooeyHoverCard>
+          </div>
+
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white/75">
+              自定义插槽
+            </span>
+            <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white/75">
+              任意内容结构
+            </span>
+            <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white/75">
+              更适合品牌化浮层
+            </span>
+          </div>
+        </motion.article>
+      </motion.div>
+    </motion.section>
+  );
+}
+
 export function HomePage({ data }: HomePageProps) {
   return (
     <main className="min-h-svh bg-[linear-gradient(180deg,#eef8ff_0%,#f7fafc_28%,#ffffff_56%,#f8fbfd_100%)] text-slate-900">
@@ -741,6 +880,13 @@ export function HomePage({ data }: HomePageProps) {
               </a>
             </nav>
             <div className="hidden items-center gap-3 md:flex">
+              <Button
+                asChild
+                variant="outline"
+                className="h-10 rounded-full border-slate-300 bg-white px-5 text-slate-900 hover:bg-slate-50"
+              >
+                <Link to="/register">免费注册</Link>
+              </Button>
               <Button
                 asChild
                 className="h-10 rounded-full bg-slate-950 px-5 hover:bg-slate-800"
@@ -787,9 +933,14 @@ export function HomePage({ data }: HomePageProps) {
               variants={fadeUpItem}
               className="flex flex-wrap items-center gap-3"
             >
-              <Button className="h-12 rounded-full bg-slate-950 px-6 text-sm hover:bg-slate-800">
-                {data.hero.primaryCta}
-                <ArrowRight className="ml-1 size-4" />
+              <Button
+                asChild
+                className="h-12 rounded-full bg-slate-950 px-6 text-sm hover:bg-slate-800"
+              >
+                <Link to="/register">
+                  {data.hero.primaryCta}
+                  <ArrowRight className="ml-1 size-4" />
+                </Link>
               </Button>
               <Button
                 variant="outline"
@@ -815,6 +966,8 @@ export function HomePage({ data }: HomePageProps) {
 
           <HeroDashboard metrics={data.metrics} features={data.features} />
         </motion.section>
+
+        <GooeyHoverShowcase />
 
         <motion.section
           variants={staggerContainer}
