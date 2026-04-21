@@ -1,6 +1,6 @@
 import type { Route } from "./+types/dashboard";
 import {
-  DashboardPage,
+  DashboardLayout,
   getDashboardMeta,
   loadDashboardPageData,
 } from "@/pages/dashboard";
@@ -14,5 +14,5 @@ export function meta({ data }: Route.MetaArgs) {
 }
 
 export default function DashboardRoute({ loaderData }: Route.ComponentProps) {
-  return <DashboardPage data={loaderData} />;
+  return <DashboardLayout data={loaderData} />;
 }

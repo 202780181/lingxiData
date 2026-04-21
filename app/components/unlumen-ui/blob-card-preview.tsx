@@ -19,7 +19,7 @@ export interface BlobCardPreviewItem {
 }
 
 export interface BlobCardPreviewProps
-  extends Omit<BlobCardProps, "header" | "children"> {
+  extends Omit<BlobCardProps, "children" | "header" | "title"> {
   badge?: React.ReactNode;
   title?: React.ReactNode;
   description?: React.ReactNode;

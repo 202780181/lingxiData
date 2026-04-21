@@ -1,379 +1,62 @@
 import * as React from "react";
 import {
-  ArrowUpRight,
   Bell,
   BookOpen,
+  ChevronDown,
   ChevronRight,
-  Clock3,
-  FolderKanban,
-  LogOut,
-  Puzzle,
-  Rocket,
+  Menu,
+  Search,
   UserRound,
-  Zap,
 } from "lucide-react";
-import { motion } from "motion/react";
+import { NavLink, Outlet, useLocation, useNavigation } from "react-router";
 
-import {
-  MotionTabsMenu,
-  type MotionTabsMenuItem,
-} from "@/components/unlumen-ui/motion-tabs-menu";
-import { BlobCardPreview } from "@/components/unlumen-ui/blob-card-preview";
 import { cn } from "@/lib/utils";
+import {
+  dashboardNavGroups,
+  dashboardPrimaryItem,
+  dashboardSidebarChrome,
+  dashboardTopTabs,
+  dashboardUtilityItems,
+  defaultDashboardViewKey,
+  getDashboardViewGroupTitle,
+  getDashboardViewItem,
+  isDashboardViewKey,
+  type DashboardNavItem,
+} from "./config";
 
 export interface DashboardPageData {
   seo: {
     title: string;
     description: string;
   };
-}
-
-type DashboardTabKey =
-  | "focus"
-  | "progression"
-  | "ideas"
-  | "activity"
-  | "profile";
-
-interface IdeaItem {
-  title: string;
-  description: string;
-  tag: string;
-}
-
-interface ActivityItem {
-  id: string;
-  actor: string;
-  action: string;
-  target: string;
-  time: string;
-  dotClassName: string;
-}
-
-interface ProfileItem {
-  label: string;
-  icon: typeof UserRound;
-  toneClassName?: string;
+  workspace: {
+    name: string;
+    region: string;
+    space: string;
+    version: string;
+  };
+  user: {
+    name: string;
+    role: string;
+  };
 }
 
 const dashboardPageData: DashboardPageData = {
   seo: {
-    title: "灵犀工作台 - Motion Tabs Menu Refinement",
-    description: "基于参考截图优化后的 Motion Tabs Menu 仪表盘演示。",
+    title: "灵犀数据工作台 - 系统驾驶舱",
+    description: "左侧导航已保留，右侧内容区暂时留空，便于先完成导航结构。",
+  },
+  workspace: {
+    name: "灵犀数据增长中台",
+    region: "华东 2 (上海)",
+    space: "默认业务空间",
+    version: "Production",
+  },
+  user: {
+    name: "Aaron",
+    role: "系统管理员",
   },
 };
-
-const weekBars = [
-  { day: "M", value: 112, className: "bg-neutral-800" },
-  { day: "T", value: 92, className: "bg-neutral-800" },
-  { day: "W", value: 66, className: "bg-neutral-800" },
-  { day: "T", value: 120, className: "bg-neutral-800" },
-  { day: "F", value: 44, className: "bg-neutral-800" },
-  { day: "S", value: 18, className: "bg-neutral-800" },
-  { day: "S", value: 4, className: "bg-neutral-200" },
-] as const;
-
-const ideaItems: IdeaItem[] = [
-  {
-    title: "Adaptive color themes",
-    description:
-      "Generate palettes from a single brand seed and keep contrast rules intact.",
-    tag: "Design",
-  },
-  {
-    title: "Micro-interaction library",
-    description:
-      "Reusable spring animations for buttons, drawers, chips, and status states.",
-    tag: "Dev",
-  },
-  {
-    title: "AI component naming",
-    description:
-      "Use LLM suggestions to surface semantic names before publishing to the registry.",
-    tag: "AI",
-  },
-  {
-    title: "Dark mode token audit",
-    description:
-      "Review all CSS vars for contrast drift and inconsistent neutral ramps.",
-    tag: "Design",
-  },
-];
-
-const activityItems: ActivityItem[] = [
-  {
-    id: "1",
-    actor: "Sarah",
-    action: "commented on",
-    target: "Design system audit",
-    time: "3m ago",
-    dotClassName: "bg-violet-500",
-  },
-  {
-    id: "2",
-    actor: "Alex",
-    action: "merged",
-    target: "feat/motion-tabs-menu",
-    time: "18m ago",
-    dotClassName: "bg-emerald-500",
-  },
-  {
-    id: "3",
-    actor: "You",
-    action: "created",
-    target: "Registry search idea",
-    time: "1h ago",
-    dotClassName: "bg-sky-500",
-  },
-  {
-    id: "4",
-    actor: "Marc",
-    action: "reviewed",
-    target: "Component usage heatmap",
-    time: "2h ago",
-    dotClassName: "bg-orange-500",
-  },
-  {
-    id: "5",
-    actor: "Sarah",
-    action: "closed",
-    target: "Dark mode token audit",
-    time: "3h ago",
-    dotClassName: "bg-pink-500",
-  },
-];
-
-const profileItems: ProfileItem[] = [
-  { label: "Profile", icon: UserRound },
-  { label: "Upgrade", icon: Rocket },
-  { label: "Projects", icon: FolderKanban },
-  { label: "Documentation", icon: BookOpen },
-  { label: "Logout", icon: LogOut, toneClassName: "text-red-500" },
-] as const;
-
-const scrollAreaClassName =
-  "overflow-y-auto pr-2 [scrollbar-width:thin] [scrollbar-color:rgba(229,229,229,1)_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-200";
-
-function FocusPanel() {
-  return (
-    <div className="space-y-4 px-0.5 pt-0.5">
-      <div className="flex items-center gap-2.5">
-        <span className="inline-flex size-3.5 rounded-full bg-[linear-gradient(135deg,#ff97a9_0%,#ff7e95_100%)] shadow-[0_0_0_3px_rgba(255,144,168,0.16)]" />
-        <span className="text-[0.84rem] font-semibold text-neutral-500">
-          Current task
-        </span>
-      </div>
-
-      <div className="space-y-4">
-        <h2 className="max-w-[13ch] text-[1.35rem] font-semibold leading-[0.98] tracking-[-0.05em] text-neutral-800">
-          Design system audit
-        </h2>
-
-        <div className="flex items-center gap-3">
-          <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-[#f3f3f1]">
-            <motion.div
-              initial={{ scaleX: 0.48 }}
-              animate={{ scaleX: 1 }}
-              transition={{
-                type: "spring",
-                stiffness: 215,
-                damping: 24,
-                mass: 0.9,
-              }}
-              className="absolute inset-y-0 left-0 w-[65%] origin-left rounded-full bg-neutral-800"
-            />
-          </div>
-
-          <div className="rounded-full bg-[#f3f3f1] px-3 py-1 text-[0.9rem] font-semibold text-neutral-500">
-            65%
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2.5 text-neutral-500">
-          <Clock3 className="size-4 stroke-[1.8]" />
-          <span className="text-[0.92rem] font-medium">2h 15m</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ProgressionPanel() {
-  return (
-    <div className="space-y-5 px-0.5 pt-0.5">
-      <div className="flex items-center justify-between">
-        <h2 className="text-[0.84rem] font-semibold text-neutral-500">
-          This week
-        </h2>
-        <span className="text-[0.84rem] font-semibold text-emerald-500">
-          12/15 tasks
-        </span>
-      </div>
-
-      <div className="flex items-end justify-between gap-1 px-0.5">
-        {weekBars.map((bar) => (
-          <div key={bar.day} className="flex flex-col items-center gap-1.5">
-            <motion.div
-              initial={{ scaleY: 0.35, opacity: 0.7 }}
-              animate={{ scaleY: 1, opacity: 1 }}
-              transition={{
-                type: "spring",
-                stiffness: 215,
-                damping: 24,
-                mass: 0.9,
-              }}
-              className={cn("w-[1.8rem] origin-bottom rounded-[0.7rem]", bar.className)}
-              style={{ height: `${Math.max(6, Math.round(bar.value * 0.42))}px` }}
-            />
-            <span className="text-[0.72rem] font-medium text-neutral-500">
-              {bar.day}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function IdeasPanel() {
-  return (
-    <div className={cn("max-h-[12rem]", scrollAreaClassName)}>
-      <div className="space-y-4">
-        {ideaItems.map((item) => (
-          <div
-            key={item.title}
-            className="flex items-start justify-between gap-3"
-          >
-            <div className="min-w-0 flex-1 space-y-1.5">
-              <h2 className="truncate text-[0.88rem] font-semibold tracking-tight text-neutral-800">
-                {item.title}
-              </h2>
-              <p className="truncate text-[0.76rem] text-neutral-500">
-                {item.description}
-              </p>
-            </div>
-
-            <span className="shrink-0 rounded-full bg-[#f3f3f1] px-2 py-1 text-[0.68rem] font-semibold text-neutral-700">
-              {item.tag}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ActivityPanel() {
-  return (
-    <div className={cn("max-h-[12rem]", scrollAreaClassName)}>
-      <div className="space-y-4">
-        {activityItems.map((item, index) => (
-          <div
-            key={item.id}
-            className="grid grid-cols-[0.75rem_minmax(0,1fr)_auto] items-start gap-2.5"
-          >
-            <div className="flex h-full flex-col items-center">
-              <span className={cn("mt-1 size-2.5 rounded-full", item.dotClassName)} />
-              {index < activityItems.length - 1 ? (
-                <span className="mt-2 w-px flex-1 bg-neutral-200" />
-              ) : null}
-            </div>
-
-            <div className="min-w-0">
-              <p className="text-[0.82rem] leading-[1.42] text-neutral-800">
-                <span className="font-semibold">{item.actor}</span>{" "}
-                <span className="font-medium text-neutral-500">{item.action}</span>
-                <br />
-                <span className="font-semibold">{item.target}</span>
-              </p>
-            </div>
-
-            <span className="shrink-0 rounded-full bg-[#f3f3f1] px-2 py-1 text-[0.68rem] font-medium text-neutral-500">
-              {item.time}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ProfilePanel() {
-  return (
-    <div className="space-y-1">
-      {profileItems.map((item) => {
-        const Icon = item.icon;
-
-        return (
-          <button
-            key={item.label}
-            type="button"
-            className="flex w-full items-center justify-between rounded-[0.95rem] px-2 py-2 text-left transition-colors hover:bg-black/[0.03]"
-          >
-            <span className="flex items-center gap-2.5">
-              <Icon
-                className={cn(
-                  "size-3.5 text-neutral-500",
-                  item.toneClassName ?? "text-neutral-500",
-                )}
-                strokeWidth={1.8}
-              />
-              <span
-                className={cn(
-                  "text-[0.82rem] font-semibold tracking-tight text-neutral-800",
-                  item.toneClassName,
-                )}
-              >
-                {item.label}
-              </span>
-            </span>
-
-            <ChevronRight
-              className={cn(
-                "size-3.5 text-neutral-500",
-                item.toneClassName ?? "text-neutral-500",
-              )}
-              strokeWidth={2}
-            />
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-const dashboardTabs: MotionTabsMenuItem[] = [
-  {
-    key: "focus" satisfies DashboardTabKey,
-    label: "Focus",
-    icon: <Zap className="size-[0.95rem]" strokeWidth={2.15} />,
-    children: <FocusPanel />,
-  },
-  {
-    key: "progression" satisfies DashboardTabKey,
-    label: "Progression",
-    icon: <ArrowUpRight className="size-[0.95rem]" strokeWidth={2.15} />,
-    children: <ProgressionPanel />,
-  },
-  {
-    key: "ideas" satisfies DashboardTabKey,
-    label: "Ideas",
-    icon: <Puzzle className="size-[0.95rem]" strokeWidth={2.15} />,
-    children: <IdeasPanel />,
-  },
-  {
-    key: "activity" satisfies DashboardTabKey,
-    label: "Activity",
-    icon: <Bell className="size-[0.95rem]" strokeWidth={2.15} />,
-    children: <ActivityPanel />,
-  },
-  {
-    key: "profile" satisfies DashboardTabKey,
-    label: "Profile",
-    icon: <UserRound className="size-[0.95rem]" strokeWidth={2.15} />,
-    children: <ProfilePanel />,
-  },
-];
 
 export async function loadDashboardPageData() {
   return dashboardPageData;
@@ -390,18 +73,247 @@ export function getDashboardMeta(data?: DashboardPageData) {
   ];
 }
 
-export function DashboardPage(_props: { data: DashboardPageData }) {
+export function DashboardLayout({ data }: { data: DashboardPageData }) {
+  const location = useLocation();
+  const navigation = useNavigation();
+  const contentScrollRef = React.useRef<HTMLDivElement>(null);
+
+  const activeView = React.useMemo(() => {
+    const [, dashboardSegment, viewSegment] = location.pathname.split("/");
+
+    if (dashboardSegment !== "dashboard") {
+      return defaultDashboardViewKey;
+    }
+
+    return isDashboardViewKey(viewSegment)
+      ? viewSegment
+      : defaultDashboardViewKey;
+  }, [location.pathname]);
+
+  const activeItem = getDashboardViewItem(activeView);
+  const activeGroupTitle = getDashboardViewGroupTitle(activeView);
+  const isSwitching = navigation.state !== "idle";
+  const SidebarActionIcon = dashboardSidebarChrome.collapseIcon;
+
+  React.useEffect(() => {
+    contentScrollRef.current?.scrollTo({ top: 0 });
+  }, [location.pathname]);
+
   return (
-    <main className="min-h-svh bg-[#f4f4f2] px-4 py-10 text-neutral-900 md:px-8 md:py-16">
-      <div className="mx-auto flex max-w-5xl flex-col items-center gap-12">
-        <MotionTabsMenu
-          items={dashboardTabs}
-          collapsedWidth={212}
-          expandedWidth={288}
-          frameHeight={240}
-        />
-        <BlobCardPreview />
+    <main className="glass-layout-bg h-svh overflow-hidden text-slate-950">
+      <div className="flex h-full flex-col gap-3 px-3 pb-3 pt-0 lg:gap-3 lg:px-4 lg:pb-4 lg:pt-0">
+        <header className="glass-topbar -mx-3 flex shrink-0 flex-col gap-3 rounded-none px-4 py-2 lg:-mx-4 lg:h-[64px] lg:flex-row lg:items-center lg:justify-between lg:px-5">
+          <div className="flex min-w-0 items-center gap-4">
+            <div className="flex shrink-0 items-center gap-3">
+              <button
+                type="button"
+                title="展开菜单"
+                className="grid size-9 shrink-0 place-items-center rounded-[11px] text-slate-500 transition-colors hover:bg-white/38 hover:text-slate-900"
+              >
+                <Menu className="size-4.5" strokeWidth={2.1} />
+              </button>
+
+              <div className="flex min-w-0 items-center gap-2.5">
+                <div className="grid size-8 shrink-0 place-items-center rounded-[11px] bg-[linear-gradient(135deg,#586dff_0%,#22c3ff_48%,#2dd4bf_100%)] shadow-[0_12px_26px_rgba(71,114,255,0.24)]">
+                  <div className="flex items-end gap-[2px]">
+                    <span className="h-3 w-1.5 rounded-full bg-white/92" />
+                    <span className="h-4.5 w-1.5 rounded-full bg-white/78" />
+                    <span className="h-3.5 w-1.5 rounded-full bg-white/62" />
+                  </div>
+                </div>
+
+                <div className="min-w-0">
+                  <p className="truncate text-[15px] font-semibold tracking-[-0.02em] text-slate-900">
+                    灵犀数据
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="hidden h-8 w-px bg-slate-200/70 lg:block" />
+
+            <nav className="hidden items-center gap-5 xl:flex">
+              {dashboardTopTabs.map((tab) => (
+                <NavLink
+                  key={tab.label}
+                  to={tab.href}
+                  className={({ isActive }) =>
+                    cn(
+                      "text-sm font-medium transition-colors",
+                      isActive
+                        ? "text-slate-950"
+                        : "text-slate-500 hover:text-slate-900",
+                    )
+                  }
+                >
+                  {tab.label}
+                </NavLink>
+              ))}
+            </nav>
+
+            <div className="hidden h-8 w-px bg-slate-200/70 xl:block" />
+
+            <div className="glass-chip hidden min-w-0 flex-1 items-center gap-3 rounded-[12px] border-white/55 px-3.5 py-2 text-slate-500 lg:flex">
+              <Search className="size-4 shrink-0 text-slate-400" strokeWidth={2} />
+              <span className="truncate text-sm text-slate-500">
+                搜索模型、任务、空间与文档
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 text-sm lg:ml-6 lg:flex-nowrap">
+            <div className="flex items-center gap-2 text-slate-500">
+              <span className="text-slate-400">{activeGroupTitle}</span>
+              <ChevronRight className="size-3.5 text-slate-300" strokeWidth={2.2} />
+              <span className="font-semibold text-slate-900">{activeItem.label}</span>
+              {isSwitching ? (
+                <span className="rounded-full bg-sky-100/80 px-2 py-0.5 text-[0.68rem] font-semibold text-sky-700">
+                  切换中
+                </span>
+              ) : null}
+            </div>
+
+            <div className="hidden h-6 w-px bg-slate-200/70 lg:block" />
+
+            <div className="glass-chip flex items-center gap-1.5 rounded-[10px] border-white/50 px-3 py-1.5 text-slate-600">
+              <span>{data.workspace.region}</span>
+              <ChevronDown className="size-3.5 text-slate-400" strokeWidth={2.2} />
+            </div>
+
+            <div className="glass-chip flex items-center gap-1.5 rounded-[10px] border-white/50 px-3 py-1.5 text-slate-600">
+              <span>{data.workspace.space}</span>
+              <ChevronDown className="size-3.5 text-slate-400" strokeWidth={2.2} />
+            </div>
+
+            <button
+              type="button"
+              className="glass-chip grid size-8 place-items-center rounded-[10px] text-slate-500 transition-colors hover:text-slate-900"
+            >
+              <BookOpen className="size-4" strokeWidth={2} />
+            </button>
+
+            <button
+              type="button"
+              className="glass-chip grid size-8 place-items-center rounded-[10px] text-slate-500 transition-colors hover:text-slate-900"
+            >
+              <Bell className="size-4" strokeWidth={2} />
+            </button>
+
+            <div className="flex items-center gap-3 lg:border-l lg:border-white/35 lg:pl-4">
+              <div className="grid size-8 place-items-center rounded-full bg-[linear-gradient(135deg,#0ea5e9_0%,#2563eb_100%)] text-white">
+                <UserRound className="size-4" strokeWidth={2} />
+              </div>
+              <div className="pr-1">
+                <p className="text-sm font-semibold text-slate-900">{data.user.name}</p>
+                <p className="text-[0.72rem] text-slate-500">{data.user.role}</p>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div className="flex min-h-0 flex-1 flex-col gap-3 lg:flex-row">
+          <aside className="w-full shrink-0 lg:w-[228px]">
+            <div className="glass-sidebar flex h-full flex-col overflow-hidden rounded-[12px] border-white/55 bg-[linear-gradient(180deg,rgba(255,255,255,0.7),rgba(244,248,255,0.54))] shadow-[0_22px_56px_rgba(135,151,181,0.16)]">
+              <div className="sidebar-scroll-area min-h-0 flex-1 overflow-y-auto">
+                <div className="pb-4 pt-2">
+                  <DashboardSidebarLink item={dashboardPrimaryItem} prominent />
+
+                  {dashboardNavGroups.map((group) => (
+                    <section key={group.title} className="pt-4 first:pt-3">
+                      <p className="px-5 pb-1.5 text-[11.5px] leading-5 font-medium tracking-[0.01em] text-slate-400/95">
+                        {group.title}
+                      </p>
+
+                      <div>
+                        {group.items.map((item) => (
+                          <DashboardSidebarLink key={item.key} item={item} />
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+
+                  <div className="mx-4 mt-3 border-t border-white/40 pt-2">
+                    {dashboardUtilityItems.map((item) => (
+                      <DashboardSidebarLink key={item.key} item={item} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-white/45 px-4 py-2.5">
+                <button
+                  type="button"
+                  title={dashboardSidebarChrome.collapseLabel}
+                  className="glass-chip grid size-8 place-items-center rounded-[10px] text-slate-600 transition-transform hover:-translate-y-0.5 hover:text-slate-900"
+                >
+                  <SidebarActionIcon className="size-[16px]" strokeWidth={1.9} />
+                </button>
+              </div>
+            </div>
+          </aside>
+
+          <section className="relative min-h-0 min-w-0 flex-1 overflow-hidden">
+            <div className="glass-panel-strong shadow-none flex h-full min-h-0 flex-col overflow-hidden rounded-[12px]">
+              <div
+                ref={contentScrollRef}
+                className="min-h-0 flex-1 overflow-y-auto px-4 py-4 md:px-5 md:py-5 [scrollbar-width:thin] [scrollbar-color:rgba(148,163,184,0.5)_transparent] [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/60"
+              >
+                <Outlet />
+              </div>
+            </div>
+          </section>
+        </div>
       </div>
     </main>
   );
+}
+
+function DashboardSidebarLink({
+  item,
+  prominent = false,
+}: {
+  item: DashboardNavItem;
+  prominent?: boolean;
+}) {
+  const Icon = item.icon;
+
+  return (
+    <NavLink
+      to={item.href}
+      className={({ isActive }) =>
+        cn(
+          "group relative mx-2.5 flex min-h-[42px] items-center gap-3 rounded-[9px] px-4 py-2.5 text-[14px] leading-[22px] transition-all duration-150",
+          isActive
+            ? "glass-sidebar-link-active text-slate-900"
+            : prominent
+              ? "hover:bg-white/36 hover:text-slate-900"
+              : "hover:bg-white/30 hover:text-slate-900",
+        )
+      }
+    >
+      {({ isActive }) => (
+        <>
+          <Icon
+            className={cn(
+              "size-[16px] shrink-0 transition-colors",
+              isActive ? "text-slate-700" : "text-slate-500",
+            )}
+            strokeWidth={1.95}
+          />
+          <span
+            className={cn(
+              "truncate tracking-tight",
+              isActive ? "font-medium text-slate-900" : "font-normal text-slate-600",
+            )}
+          >
+            {item.label}
+          </span>
+        </>
+      )}
+    </NavLink>
+  );
+}
+
+export function DashboardViewPage(_props: { viewKey: string }) {
+  return null;
 }
