@@ -75,6 +75,35 @@ export interface RegisterEmailCodePayload {
   email: string;
 }
 
+export interface LoginCaptchaResponse {
+  token: string;
+  image_data_url: string;
+  expires_at: string;
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+  image_captcha_token: string;
+  image_captcha_answer: string;
+}
+
+export interface LoginSession {
+  session_id: string;
+  user_id: string;
+  email: string;
+  name: string;
+  onboarding_required: boolean;
+  active_tenant_id: string | null;
+  active_role: "owner" | "member" | null;
+  platform_roles: string[];
+}
+
+export interface LoginResponse {
+  session: LoginSession;
+  [key: string]: unknown;
+}
+
 export interface RegisterEmailCodeResponse {
   cooldown_seconds?: number;
   debug_code?: string;
@@ -97,6 +126,19 @@ export interface RegisterResponse {
 
 export function requestRegisterEmailCode(payload: RegisterEmailCodePayload) {
   return appApiFetch<RegisterEmailCodeResponse>("/auth/register/email-code", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getLoginCaptcha() {
+  return appApiFetch<LoginCaptchaResponse>("/auth/captcha", {
+    method: "GET",
+  });
+}
+
+export function loginUser(payload: LoginPayload) {
+  return appApiFetch<LoginResponse>("/auth/login", {
     method: "POST",
     body: JSON.stringify(payload),
   });

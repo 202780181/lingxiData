@@ -1,0 +1,117 @@
+<svg width="1236" height="788" viewBox="0 0 1236 788" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="rightPanel" x1="728" y1="170" x2="1144" y2="496" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.98"/>
+      <stop offset="1" stop-color="#F5FAFF" stop-opacity="0.94"/>
+    </linearGradient>
+    <linearGradient id="rightAccent" x1="850" y1="174" x2="1122" y2="467" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C68FF"/>
+      <stop offset="0.46" stop-color="#4B88FF"/>
+      <stop offset="1" stop-color="#2DD4BF"/>
+    </linearGradient>
+    <linearGradient id="rightArea" x1="790" y1="250" x2="1108" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C68FF" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#2DD4BF" stop-opacity="0.08"/>
+    </linearGradient>
+    <linearGradient id="rightChip" x1="466" y1="316" x2="820" y2="433" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.98"/>
+      <stop offset="1" stop-color="#EEF7FF" stop-opacity="0.94"/>
+    </linearGradient>
+    <filter id="rightShadow" x="280" y="80" width="980" height="680" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feGaussianBlur in="BackgroundImageFix" stdDeviation="24"/>
+      <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_0_1"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_0_1" result="shape"/>
+      <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#3C6BFF" flood-opacity="0.12"/>
+    </filter>
+    <filter id="rightGlow" x="310" y="100" width="870" height="620" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="34" result="effect1_foregroundBlur_0_1"/>
+    </filter>
+  </defs>
+
+  <g opacity="0.7" filter="url(#rightGlow)">
+    <circle cx="956" cy="282" r="138" fill="#6F68FF"/>
+    <circle cx="812" cy="420" r="110" fill="#56A6FF"/>
+    <circle cx="641" cy="584" r="104" fill="#35D1CF"/>
+  </g>
+
+  <g filter="url(#rightShadow)">
+    <rect x="760" y="160" width="370" height="286" rx="48" fill="url(#rightPanel)"/>
+    <text x="806" y="214" fill="#0F172A" font-size="24" font-weight="700" font-family="Inter, Arial, sans-serif">Market Radar</text>
+    <text x="806" y="242" fill="#64748B" font-size="13" font-weight="500" font-family="Inter, Arial, sans-serif">Brand, creator and category signals</text>
+
+    <g opacity="0.66">
+      <path d="M807 286H1084" stroke="#E0EAF8" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 9"/>
+      <path d="M807 332H1084" stroke="#E0EAF8" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 9"/>
+      <path d="M807 378H1084" stroke="#E0EAF8" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 9"/>
+      <path d="M844 262V398" stroke="#E6EEF9" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 10"/>
+      <path d="M910 262V398" stroke="#E6EEF9" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 10"/>
+      <path d="M976 262V398" stroke="#E6EEF9" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 10"/>
+    </g>
+
+    <path d="M808 401V307C847 330 871 343 905 324C931 309 958 272 990 270C1027 268 1044 317 1084 287V401H808Z" fill="url(#rightArea)"/>
+    <path d="M808 307C847 330 871 343 905 324C931 309 958 272 990 270C1027 268 1044 317 1084 287" stroke="url(#rightAccent)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="905" cy="324" r="9" fill="#FFFFFF" stroke="#4B88FF" stroke-width="4"/>
+    <circle cx="990" cy="270" r="9" fill="#FFFFFF" stroke="#7C68FF" stroke-width="4"/>
+    <circle cx="1084" cy="287" r="9" fill="#FFFFFF" stroke="#2DD4BF" stroke-width="4"/>
+
+    <rect x="814" y="415" width="112" height="20" rx="10" fill="#EEF4FF"/>
+    <text x="838" y="429" fill="#366AF3" font-size="11.5" font-weight="800" font-family="Inter, Arial, sans-serif">Trend +31%</text>
+    <rect x="936" y="415" width="100" height="20" rx="10" fill="#EAFBF9"/>
+    <text x="959" y="429" fill="#139F9E" font-size="11.5" font-weight="800" font-family="Inter, Arial, sans-serif">Share 24%</text>
+  </g>
+
+  <g filter="url(#rightShadow)">
+    <rect x="474" y="316" width="338" height="120" rx="36" fill="url(#rightChip)"/>
+    <text x="516" y="360" fill="#64748B" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">Campaign matrix</text>
+    <text x="516" y="390" fill="#0F172A" font-size="24" font-weight="800" font-family="Inter, Arial, sans-serif">6 channels synced</text>
+    <rect x="680" y="346" width="92" height="52" rx="18" fill="url(#rightAccent)"/>
+    <text x="704" y="379" fill="#FFFFFF" font-size="16" font-weight="800" font-family="Inter, Arial, sans-serif">A/B</text>
+    <rect x="516" y="405" width="98" height="13" rx="6.5" fill="#E9F0FD"/>
+    <rect x="516" y="405" width="66" height="13" rx="6.5" fill="#4B88FF"/>
+    <rect x="626" y="405" width="118" height="13" rx="6.5" fill="#EEF4FF"/>
+  </g>
+
+  <g filter="url(#rightShadow)">
+    <circle cx="584" cy="561" r="96" fill="#FFFFFF" fill-opacity="0.94"/>
+    <path d="M584 483C607.489 483 630.323 490.635 649.071 504.758L625.615 535.884C616.799 529.241 606.061 525.648 594.994 525.648C583.928 525.648 573.189 529.241 564.373 535.884L540.918 504.758C559.666 490.635 582.5 483 605.989 483H584Z" fill="#7C68FF"/>
+    <path d="M650.36 506.16C667.856 521.534 678.503 543.308 680.002 566.548L641.103 569.053C640.398 558.12 635.392 547.908 627.141 540.659L650.36 506.16Z" fill="#4B88FF"/>
+    <path d="M679.998 570.152C678.413 593.087 667.51 614.553 649.69 629.682L625.039 599.488C633.441 592.356 638.581 582.236 639.328 571.41L679.998 570.152Z" fill="#2DD4BF"/>
+    <circle cx="584" cy="561" r="42" fill="#F8FBFF"/>
+    <text x="558" y="556" fill="#64748B" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">CTR</text>
+    <text x="548" y="582" fill="#0F172A" font-size="22" font-weight="800" font-family="Inter, Arial, sans-serif">12.8%</text>
+  </g>
+
+  <g filter="url(#rightShadow)">
+    <rect x="358" y="616" width="248" height="110" rx="34" fill="#FFFFFF" fill-opacity="0.94"/>
+    <text x="402" y="660" fill="#64748B" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">Conversion funnel</text>
+    <path d="M400 686H564" stroke="#E6EEF9" stroke-width="16" stroke-linecap="round"/>
+    <path d="M400 686H520" stroke="#4B88FF" stroke-width="16" stroke-linecap="round"/>
+    <path d="M428 708H535" stroke="#7C68FF" stroke-width="14" stroke-linecap="round"/>
+    <path d="M456 730H508" stroke="#2DD4BF" stroke-width="12" stroke-linecap="round"/>
+  </g>
+
+  <g filter="url(#rightShadow)">
+    <rect x="648" y="126" width="102" height="102" rx="30" fill="#FFFFFF" fill-opacity="0.94"/>
+    <rect x="683" y="160" width="32" height="32" rx="10" fill="url(#rightAccent)"/>
+    <path d="M690 176H708" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M699 167V185" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+  </g>
+
+  <g filter="url(#rightShadow)">
+    <rect x="694" y="470" width="126" height="76" rx="28" fill="#FFFFFF" fill-opacity="0.94"/>
+    <text x="724" y="505" fill="#64748B" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">Orders</text>
+    <text x="724" y="532" fill="#0F172A" font-size="24" font-weight="800" font-family="Inter, Arial, sans-serif">4,820</text>
+  </g>
+
+  <g opacity="0.84">
+    <circle cx="764" cy="500" r="8" fill="#56A6FF"/>
+    <circle cx="667" cy="280" r="7" fill="#2DD4BF"/>
+    <circle cx="1132" cy="254" r="8" fill="#7C68FF"/>
+    <path d="M720 229L771 160" stroke="#C9D9F5" stroke-width="3" stroke-linecap="round" stroke-dasharray="5 8"/>
+    <path d="M801 436L739 471" stroke="#C9D9F5" stroke-width="3" stroke-linecap="round" stroke-dasharray="5 8"/>
+    <path d="M474 375L424 617" stroke="#C9D9F5" stroke-width="3" stroke-linecap="round" stroke-dasharray="5 8"/>
+  </g>
+</svg>
