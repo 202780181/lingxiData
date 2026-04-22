@@ -1,5 +1,5 @@
 import * as React from "react";
-import { LoaderCircle, RefreshCw } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { useNavigate } from "react-router";
 
 import {
@@ -121,7 +121,7 @@ export function LoginPage() {
           onChange={(event) => setPassword(event.target.value)}
         />
 
-        <div className="grid grid-cols-[minmax(0,1fr)_118px] gap-2.5">
+        <div className="grid grid-cols-[minmax(0,1fr)_148px] gap-2.5">
           <AuthInput
             type="text"
             aria-label="图形验证码"
@@ -133,23 +133,20 @@ export function LoginPage() {
           <button
             type="button"
             onClick={() => void loadCaptcha()}
-            className="group flex h-10 items-center justify-center gap-2 rounded-[8px] border border-black/10 bg-white px-3 transition-[border-color,background-color] hover:border-black/15 hover:bg-[#fafbff]"
+            className="group flex h-10 items-center justify-center overflow-hidden rounded-[8px] bg-white p-0 transition-colors hover:bg-[#fafbff]"
             aria-label="刷新图形验证码"
           >
-            <div className="flex min-w-0 flex-1 items-center justify-center overflow-hidden">
-              {loadingCaptcha ? (
-                <LoaderCircle className="size-4 animate-spin text-[#a2a4a8]" />
-              ) : captcha?.image_data_url ? (
-                <img
-                  src={captcha.image_data_url}
-                  alt="图形验证码"
-                  className="h-5 w-full object-contain"
-                />
-              ) : (
-                <span className="text-[12px] text-[#8f959e]">重新获取</span>
-              )}
-            </div>
-            <RefreshCw className="size-3.5 shrink-0 text-[#a2a4a8] transition-colors group-hover:text-[#60636b]" />
+            {loadingCaptcha ? (
+              <LoaderCircle className="size-4 animate-spin text-[#a2a4a8]" />
+            ) : captcha?.image_data_url ? (
+              <img
+                src={captcha.image_data_url}
+                alt="图形验证码"
+                className="-m-px block h-[calc(100%+2px)] w-[calc(100%+2px)] max-w-none object-fill"
+              />
+            ) : (
+              <span className="text-[12px] text-[#8f959e]">重新获取</span>
+            )}
           </button>
         </div>
 
