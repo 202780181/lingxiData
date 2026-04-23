@@ -25,10 +25,28 @@ interface AuthInputProps
   endAdornment?: React.ReactNode;
 }
 
+interface AuthEmailInputProps
+  extends Omit<AuthInputProps, "type" | "value" | "onChange"> {
+  value: string;
+  onValueChange: (value: string) => void;
+}
+
 const authFontFamily =
   "Outfit, Inter, -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif";
 
 const authBrandName = "灵犀数据";
+
+const emailDomainSuggestions = [
+  { domain: "qq.com", label: "QQ 邮箱" },
+  { domain: "gmail.com", label: "Google 邮箱" },
+  { domain: "outlook.com", label: "微软邮箱" },
+  { domain: "hotmail.com", label: "微软邮箱" },
+  { domain: "live.com", label: "微软邮箱" },
+  { domain: "163.com", label: "网易邮箱" },
+  { domain: "126.com", label: "网易邮箱" },
+  { domain: "yeah.net", label: "网易邮箱" },
+  { domain: "aliyun.com", label: "阿里邮箱" },
+] as const;
 
 export function AuthShell({
   mode,
@@ -111,46 +129,234 @@ export function AuthShell({
   );
 }
 
-export function AuthInput({
-  icon: Icon,
-  error = false,
-  wrapperClassName,
-  inputClassName,
-  endAdornment,
-  disabled,
-  ...props
-}: AuthInputProps) {
-  return (
-    <div
-      className={cn(
-        "group/auth relative flex h-10 items-center rounded-[8px] border bg-white transition-[border-color,box-shadow,background-color]",
-        error
-          ? "border-rose-300 shadow-[0_0_0_3px_rgba(251,113,133,0.08)]"
-          : "border-black/10 hover:border-black/15 focus-within:border-[#635bff] focus-within:shadow-[0_0_0_3px_rgba(99,91,255,0.12)]",
-        disabled ? "cursor-not-allowed bg-[#f7f7fa] opacity-70" : "cursor-text",
-        wrapperClassName,
-      )}
-    >
-      {Icon ? (
-        <div className="pl-[14px] text-[#a2a4a8] transition-colors group-focus-within/auth:text-[#635bff]">
-          <Icon className="size-4" strokeWidth={1.9} />
-        </div>
-      ) : null}
-
-      <input
-        disabled={disabled}
+export const AuthInput = React.forwardRef<HTMLInputElement, AuthInputProps>(
+  function AuthInput(
+    {
+      icon: Icon,
+      error = false,
+      wrapperClassName,
+      inputClassName,
+      endAdornment,
+      disabled,
+      ...props
+    },
+    ref,
+  ) {
+    return (
+      <div
         className={cn(
-          "h-full min-w-0 flex-1 bg-transparent text-[14px] leading-5 text-[#06061f] outline-none placeholder:text-[#b0b3bc] disabled:cursor-not-allowed",
-          Icon ? "pl-2.5" : "pl-[14px]",
-          endAdornment ? "pr-11" : "pr-[14px]",
-          inputClassName,
+          "group/auth relative flex h-10 items-center rounded-[8px] border bg-white transition-[border-color,box-shadow,background-color]",
+          error
+            ? "border-rose-300 shadow-[0_0_0_3px_rgba(251,113,133,0.08)]"
+            : "border-black/10 hover:border-black/15 focus-within:border-[#635bff] focus-within:shadow-[0_0_0_3px_rgba(99,91,255,0.12)]",
+          disabled ? "cursor-not-allowed bg-[#f7f7fa] opacity-70" : "cursor-text",
+          wrapperClassName,
         )}
+      >
+        {Icon ? (
+          <div className="pl-[14px] text-[#a2a4a8] transition-colors group-focus-within/auth:text-[#635bff]">
+            <Icon className="size-4" strokeWidth={1.9} />
+          </div>
+        ) : null}
+
+        <input
+          ref={ref}
+          disabled={disabled}
+          className={cn(
+            "h-full min-w-0 flex-1 bg-transparent text-[14px] leading-5 text-[#06061f] outline-none placeholder:text-[#b0b3bc] disabled:cursor-not-allowed",
+            Icon ? "pl-2.5" : "pl-[14px]",
+            endAdornment ? "pr-11" : "pr-[14px]",
+            inputClassName,
+          )}
+          {...props}
+        />
+
+        {endAdornment ? (
+          <div className="absolute inset-y-0 right-2 flex items-center">
+            {endAdornment}
+          </div>
+        ) : null}
+      </div>
+    );
+  },
+);
+
+export function AuthEmailInput({
+  value,
+  onValueChange,
+  disabled,
+  onFocus,
+  onBlur,
+  onKeyDown,
+  ...props
+}: AuthEmailInputProps) {
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const listboxId = React.useId();
+  const [isFocused, setIsFocused] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const [suppressSuggestions, setSuppressSuggestions] = React.useState(false);
+
+  const suggestions = React.useMemo(
+    () => buildEmailSuggestions(value),
+    [value],
+  );
+  const hasExactSuggestionMatch = React.useMemo(
+    () =>
+      suggestions.some(
+        (suggestion) =>
+          suggestion.value.toLowerCase() === value.trim().toLowerCase(),
+      ),
+    [suggestions, value],
+  );
+
+  React.useEffect(() => {
+    if (!isFocused || disabled) {
+      setIsOpen(false);
+      return;
+    }
+
+    if (suppressSuggestions) {
+      return;
+    }
+
+    setIsOpen(suggestions.length > 0 && !hasExactSuggestionMatch);
+  }, [
+    disabled,
+    hasExactSuggestionMatch,
+    isFocused,
+    suggestions.length,
+    suppressSuggestions,
+  ]);
+
+  React.useEffect(() => {
+    if (!suggestions.length) {
+      setActiveIndex(0);
+      return;
+    }
+
+    setActiveIndex((current) => Math.min(current, suggestions.length - 1));
+  }, [suggestions]);
+
+  function applySuggestion(nextValue: string) {
+    onValueChange(nextValue);
+    setSuppressSuggestions(true);
+    setIsOpen(false);
+    setActiveIndex(0);
+
+    window.requestAnimationFrame(() => {
+      inputRef.current?.focus();
+      inputRef.current?.setSelectionRange(nextValue.length, nextValue.length);
+    });
+  }
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setSuppressSuggestions(false);
+    onValueChange(event.target.value);
+  }
+
+  function handleFocus(event: React.FocusEvent<HTMLInputElement>) {
+    setIsFocused(true);
+    onFocus?.(event);
+  }
+
+  function handleBlur(event: React.FocusEvent<HTMLInputElement>) {
+    setIsFocused(false);
+    setIsOpen(false);
+    onBlur?.(event);
+  }
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    onKeyDown?.(event);
+
+    if (event.defaultPrevented || !suggestions.length) {
+      return;
+    }
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setIsOpen(true);
+      setActiveIndex((current) => (current + 1) % suggestions.length);
+      return;
+    }
+
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setIsOpen(true);
+      setActiveIndex((current) => (current - 1 + suggestions.length) % suggestions.length);
+      return;
+    }
+
+    if (event.key === "Enter" && isOpen) {
+      event.preventDefault();
+      applySuggestion(suggestions[activeIndex].value);
+      return;
+    }
+
+    if (event.key === "Escape") {
+      setIsOpen(false);
+    }
+  }
+
+  return (
+    <div className="relative">
+      <AuthInput
         {...props}
+        ref={inputRef}
+        type="text"
+        inputMode="email"
+        autoCapitalize="none"
+        autoCorrect="off"
+        spellCheck={false}
+        value={value}
+        disabled={disabled}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded={isOpen}
+        aria-controls={isOpen ? listboxId : undefined}
+        aria-activedescendant={
+          isOpen ? `${listboxId}-option-${activeIndex}` : undefined
+        }
       />
 
-      {endAdornment ? (
-        <div className="absolute inset-y-0 right-2 flex items-center">
-          {endAdornment}
+      {isOpen ? (
+        <div className="absolute inset-x-0 top-[calc(100%+6px)] z-30 overflow-hidden rounded-[10px] border border-black/10 bg-white shadow-[0_14px_32px_rgba(12,18,28,0.12)]">
+          <ul id={listboxId} role="listbox" className="py-1.5">
+            {suggestions.map((suggestion, index) => {
+              const isActive = index === activeIndex;
+
+              return (
+                <li key={suggestion.domain} role="presentation">
+                  <button
+                    id={`${listboxId}-option-${index}`}
+                    type="button"
+                    role="option"
+                    aria-selected={isActive}
+                    className={cn(
+                      "flex w-full items-center justify-between gap-4 px-3.5 py-2 text-left transition-colors",
+                      isActive ? "bg-[#f3f2ff]" : "hover:bg-[#f7f7fb]",
+                    )}
+                    onMouseEnter={() => setActiveIndex(index)}
+                    onMouseDown={(event) => {
+                      event.preventDefault();
+                      applySuggestion(suggestion.value);
+                    }}
+                  >
+                    <span className="min-w-0 truncate text-[14px] font-medium text-[#06061f]">
+                      {suggestion.value}
+                    </span>
+                    <span className="shrink-0 text-[12px] text-[#8f959e]">
+                      {suggestion.label}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       ) : null}
     </div>
@@ -184,6 +390,29 @@ export function AuthPasswordInput(
   );
 }
 
+function buildEmailSuggestions(value: string) {
+  const trimmedValue = value.trim();
+  const atIndex = trimmedValue.indexOf("@");
+
+  if (atIndex <= 0) {
+    return [];
+  }
+
+  const localPart = trimmedValue.slice(0, atIndex);
+  const domainQuery = trimmedValue.slice(atIndex + 1).toLowerCase();
+
+  if (!localPart || /\s/.test(localPart) || /\s/.test(domainQuery)) {
+    return [];
+  }
+
+  return emailDomainSuggestions
+    .filter((item) => item.domain.startsWith(domainQuery))
+    .map((item) => ({
+      ...item,
+      value: `${localPart}@${item.domain}`,
+    }));
+}
+
 export function AuthMessage({
   tone = "info",
   className,
@@ -212,6 +441,8 @@ export function AuthMessage({
 
 export function getAuthErrorMessage(error: unknown) {
   if (error instanceof AppApiError) {
+    const normalizedMessage = error.message.trim().toLowerCase();
+
     switch (error.code) {
       case "INVALID_REQUEST":
         return "提交信息不完整或格式不正确，请检查后重试。";
@@ -222,6 +453,13 @@ export function getAuthErrorMessage(error: unknown) {
       case "RATE_LIMITED":
         return "操作过于频繁，请稍后再试。";
       default:
+        if (
+          normalizedMessage === "invalid email or password" ||
+          normalizedMessage === "invalid credentials"
+        ) {
+          return "用户名或密码错误";
+        }
+
         return error.message;
     }
   }

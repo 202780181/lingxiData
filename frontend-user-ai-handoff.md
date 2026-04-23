@@ -55,6 +55,7 @@
 - `WORKSPACE_ONBOARDING_REQUIRED`：用户还没有工作区。
 - `FEATURE_NOT_ENABLED`：当前套餐没有功能。
 - `QUOTA_EXCEEDED`：用量超限。
+- `INVALID_CREDENTIALS`：用户名或密码错误。
 - `ACCOUNT_NOT_FOUND`：账号不存在或不属于当前租户。
 - `INVALID_REQUEST`：参数错误。
 

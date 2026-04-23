@@ -3,12 +3,14 @@ import { LoaderCircle } from "lucide-react";
 import { useNavigate } from "react-router";
 
 import {
+  AuthEmailInput,
   AuthInput,
   AuthMessage,
   AuthPasswordInput,
   AuthShell,
   getAuthErrorMessage,
 } from "@/components/auth/auth-shell";
+import { getAuthenticatedRedirectTarget } from "@/lib/auth-redirect";
 import {
   getLoginCaptcha,
   loginUser,
@@ -78,14 +80,14 @@ export function LoginPage() {
     setErrorMessage(null);
 
     try {
-      await loginUser({
+      const result = await loginUser({
         email: email.trim(),
         password,
         image_captcha_token: captcha.token,
         image_captcha_answer: captchaAnswer.trim(),
       });
 
-      navigate("/dashboard", { replace: true });
+      navigate(getAuthenticatedRedirectTarget(result), { replace: true });
     } catch (error) {
       setErrorMessage(getAuthErrorMessage(error));
       await loadCaptcha({ preserveError: true });
@@ -103,14 +105,13 @@ export function LoginPage() {
       helperActionTo="/register"
       emailHint="或通过邮箱登录"
     >
-      <form className="space-y-[14px]" onSubmit={handleSubmit}>
-        <AuthInput
-          type="email"
+      <form className="space-y-3" onSubmit={handleSubmit}>
+        <AuthEmailInput
           autoComplete="username"
           aria-label="登录邮箱"
           placeholder="邮箱"
           value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          onValueChange={setEmail}
         />
 
         <AuthPasswordInput
@@ -121,7 +122,7 @@ export function LoginPage() {
           onChange={(event) => setPassword(event.target.value)}
         />
 
-        <div className="grid grid-cols-[minmax(0,1fr)_148px] gap-2.5">
+        <div className="grid grid-cols-[minmax(0,1fr)_148px] gap-2">
           <AuthInput
             type="text"
             aria-label="图形验证码"
@@ -133,7 +134,7 @@ export function LoginPage() {
           <button
             type="button"
             onClick={() => void loadCaptcha()}
-            className="group flex h-10 items-center justify-center overflow-hidden rounded-[8px] bg-white p-0 transition-colors hover:bg-[#fafbff]"
+            className="group flex h-[32px] w-full self-center items-center justify-center overflow-hidden rounded-[8px] bg-transparent p-0"
             aria-label="刷新图形验证码"
           >
             {loadingCaptcha ? (
@@ -142,7 +143,7 @@ export function LoginPage() {
               <img
                 src={captcha.image_data_url}
                 alt="图形验证码"
-                className="-m-px block h-[calc(100%+2px)] w-[calc(100%+2px)] max-w-none object-fill"
+                className="block w-full max-w-none shrink-0"
               />
             ) : (
               <span className="text-[12px] text-[#8f959e]">重新获取</span>

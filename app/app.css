@@ -229,7 +229,74 @@ body {
   }
 }
 
+@keyframes lovart-upgrade-overlay-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lovart-upgrade-overlay-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes lovart-upgrade-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes lovart-upgrade-dialog-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+
 @layer components {
+  .lovart-upgrade-overlay[data-state="open"] {
+    animation: lovart-upgrade-overlay-in 160ms ease-out both;
+  }
+
+  .lovart-upgrade-overlay[data-state="closing"] {
+    animation: lovart-upgrade-overlay-out 140ms ease-in both;
+  }
+
+  .lovart-upgrade-dialog[data-state="open"] {
+    animation: lovart-upgrade-dialog-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .lovart-upgrade-dialog[data-state="closing"] {
+    animation: lovart-upgrade-dialog-out 140ms ease-in both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lovart-upgrade-overlay,
+    .lovart-upgrade-dialog {
+      animation: none !important;
+    }
+  }
+
   .glass-layout-bg {
     position: relative;
     isolation: isolate;

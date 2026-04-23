@@ -249,7 +249,7 @@ export function RegisterPage() {
                 注册中
               </>
             ) : (
-              "免费注册"
+              "立即注册"
             )}
           </button>
         </form>

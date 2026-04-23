@@ -241,6 +241,7 @@ export const dashboardTopTabs = [
 
 export const dashboardSidebarChrome = {
   collapseLabel: "收起菜单",
+  expandLabel: "展开菜单",
   collapseIcon: PanelsTopLeft,
   systemIcon: Database,
 };

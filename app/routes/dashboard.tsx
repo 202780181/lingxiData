@@ -1,18 +1,27 @@
 import type { Route } from "./+types/dashboard";
+import { Navigate } from "react-router";
 import {
   DashboardLayout,
   getDashboardMeta,
   loadDashboardPageData,
 } from "@/pages/dashboard";
+import { WORKSPACE_ONBOARDING_ROUTE } from "@/lib/auth-redirect";
+import { needsWorkspaceOnboarding, useAppCurrentUser } from "@/lib/current-user";
 
-export async function clientLoader(_args: Route.ClientLoaderArgs) {
-  return loadDashboardPageData();
+export function meta(_args: Route.MetaArgs) {
+  return getDashboardMeta();
 }
 
-export function meta({ data }: Route.MetaArgs) {
-  return getDashboardMeta(data);
-}
+export default function DashboardRoute() {
+  const currentUser = useAppCurrentUser();
 
-export default function DashboardRoute({ loaderData }: Route.ComponentProps) {
-  return <DashboardLayout data={loaderData} />;
+  if (!currentUser) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (needsWorkspaceOnboarding(currentUser)) {
+    return <Navigate to={WORKSPACE_ONBOARDING_ROUTE} replace />;
+  }
+
+  return <DashboardLayout data={loadDashboardPageData(currentUser)} />;
 }

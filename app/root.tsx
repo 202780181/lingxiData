@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -5,8 +6,16 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 
+import { getCurrentUser, isAppApiError } from "@/lib/app-api";
+import {
+  buildLocationHref,
+  rememberLastNonAuthPath,
+  shouldRememberPath,
+} from "@/lib/auth-redirect";
+import type { AppCurrentUserState } from "@/lib/current-user";
 import type { Route } from "./+types/root";
 import "./app.css";
 
@@ -23,6 +32,24 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+export async function clientLoader(): Promise<AppCurrentUserState> {
+  try {
+    return {
+      currentUser: await getCurrentUser(),
+    };
+  } catch (error) {
+    if (isAppApiError(error) && error.code === "UNAUTHORIZED") {
+      return {
+        currentUser: null,
+      };
+    }
+
+    throw error;
+  }
+}
+
+clientLoader.hydrate = true;
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh-CN">
@@ -32,7 +59,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="min-h-svh isolate">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -42,6 +69,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const location = useLocation();
+
+  React.useEffect(() => {
+    if (!shouldRememberPath(location.pathname)) {
+      return;
+    }
+
+    rememberLastNonAuthPath(
+      buildLocationHref({
+        pathname: location.pathname,
+        search: location.search,
+        hash: location.hash,
+      }),
+    );
+  }, [location.hash, location.pathname, location.search]);
+
   return <Outlet />;
 }
 

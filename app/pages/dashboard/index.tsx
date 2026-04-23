@@ -3,10 +3,10 @@ import {
   Bell,
   BookOpen,
   Search,
-  UserRound,
 } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router";
 
+import { DashboardUserMenu } from "@/components/dashboard/user-menu";
 import { cn } from "@/lib/utils";
 import {
   dashboardNavGroups,
@@ -15,6 +15,12 @@ import {
   dashboardUtilityItems,
   type DashboardNavItem,
 } from "./config";
+import type { CurrentUserResponse } from "@/lib/app-api";
+import {
+  getUserDisplayName,
+  getUserInitials,
+  getUserRoleLabel,
+} from "@/lib/current-user";
 
 export interface DashboardPageData {
   seo: {
@@ -29,11 +35,16 @@ export interface DashboardPageData {
   };
   user: {
     name: string;
+    email: string;
     role: string;
+    initials: string;
   };
 }
 
-const dashboardPageData: DashboardPageData = {
+const DASHBOARD_SIDEBAR_COLLAPSED_STORAGE_KEY =
+  "lingxi:dashboard-sidebar-collapsed";
+
+const dashboardPageData: Omit<DashboardPageData, "user"> = {
   seo: {
     title: "灵犀数据工作台 - 系统驾驶舱",
     description: "左侧导航已保留，右侧内容区暂时留空，便于先完成导航结构。",
@@ -44,14 +55,20 @@ const dashboardPageData: DashboardPageData = {
     space: "默认业务空间",
     version: "Production",
   },
-  user: {
-    name: "Aaron",
-    role: "系统管理员",
-  },
 };
 
-export async function loadDashboardPageData() {
-  return dashboardPageData;
+export function loadDashboardPageData(currentUser: CurrentUserResponse) {
+  const displayName = getUserDisplayName(currentUser.session);
+
+  return {
+    ...dashboardPageData,
+    user: {
+      name: displayName,
+      email: currentUser.session.email,
+      role: getUserRoleLabel(currentUser.session),
+      initials: getUserInitials(displayName),
+    },
+  } satisfies DashboardPageData;
 }
 
 export function getDashboardMeta(data?: DashboardPageData) {
@@ -69,14 +86,37 @@ export function DashboardLayout({ data }: { data: DashboardPageData }) {
   const location = useLocation();
   const contentScrollRef = React.useRef<HTMLDivElement>(null);
   const SidebarActionIcon = dashboardSidebarChrome.collapseIcon;
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false);
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    setIsSidebarCollapsed(
+      window.localStorage.getItem(DASHBOARD_SIDEBAR_COLLAPSED_STORAGE_KEY) ===
+        "true",
+    );
+  }, []);
 
   React.useEffect(() => {
     contentScrollRef.current?.scrollTo({ top: 0 });
   }, [location.pathname]);
 
+  React.useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.localStorage.setItem(
+      DASHBOARD_SIDEBAR_COLLAPSED_STORAGE_KEY,
+      String(isSidebarCollapsed),
+    );
+  }, [isSidebarCollapsed]);
+
   return (
-    <main className="glass-layout-bg h-svh overflow-hidden text-slate-950">
-      <div className="flex h-full flex-col gap-3 px-3 pb-3 pt-0 lg:gap-3 lg:px-4 lg:pb-4 lg:pt-0">
+    <main className="glass-layout-bg flex h-svh flex-col overflow-hidden text-slate-950">
+      <div className="flex min-h-0 flex-1 flex-col gap-3 px-3 pb-3 pt-0 lg:gap-3 lg:px-4 lg:pb-4 lg:pt-0">
         <header className="glass-topbar -mx-3 flex shrink-0 flex-col gap-3 rounded-none px-4 py-2 lg:-mx-4 lg:h-[64px] lg:flex-row lg:items-center lg:justify-between lg:px-5">
           <div className="flex min-w-0 items-center gap-4">
             <div className="flex min-w-0 items-center gap-2.5 pr-1">
@@ -134,54 +174,104 @@ export function DashboardLayout({ data }: { data: DashboardPageData }) {
               <Bell className="size-4" strokeWidth={2} />
             </button>
 
-            <div className="flex items-center gap-3 lg:border-l lg:border-white/35 lg:pl-4">
-              <div className="grid size-8 place-items-center rounded-full bg-[linear-gradient(135deg,#0ea5e9_0%,#2563eb_100%)] text-white">
-                <UserRound className="size-4" strokeWidth={2} />
-              </div>
-              <div className="pr-1">
-                <p className="text-sm font-semibold text-slate-900">{data.user.name}</p>
-                <p className="text-[0.72rem] text-slate-500">{data.user.role}</p>
-              </div>
+            <div className="flex items-center lg:border-l lg:border-white/35 lg:pl-4">
+              <DashboardUserMenu user={data.user} />
             </div>
           </div>
         </header>
 
         <div className="flex min-h-0 flex-1 flex-col gap-3 lg:flex-row">
-          <aside className="w-full shrink-0 lg:w-[228px]">
+          <aside
+            className={cn(
+              "w-full shrink-0 transition-[width] duration-200 lg:overflow-hidden",
+              isSidebarCollapsed ? "lg:w-[84px]" : "lg:w-[228px]",
+            )}
+          >
             <div className="glass-sidebar flex h-full flex-col overflow-hidden rounded-[12px] border-white/55 bg-[linear-gradient(180deg,rgba(255,255,255,0.7),rgba(244,248,255,0.54))] shadow-[0_22px_56px_rgba(135,151,181,0.16)]">
               <div className="sidebar-scroll-area min-h-0 flex-1 overflow-y-auto">
-                <div className="pb-4 pt-2">
-                  <DashboardSidebarLink item={dashboardPrimaryItem} prominent />
+                <div className={cn("pb-4 pt-2", isSidebarCollapsed && "lg:pb-3")}>
+                  <DashboardSidebarLink
+                    item={dashboardPrimaryItem}
+                    prominent
+                    collapsed={isSidebarCollapsed}
+                  />
 
                   {dashboardNavGroups.map((group) => (
-                    <section key={group.title} className="pt-4 first:pt-3">
-                      <p className="px-5 pb-1.5 text-[11.5px] leading-5 font-medium tracking-[0.01em] text-slate-400/95">
-                        {group.title}
-                      </p>
+                    <section
+                      key={group.title}
+                      className={cn(
+                        "pt-4 first:pt-3",
+                        isSidebarCollapsed && "lg:pt-2.5 lg:first:pt-2",
+                      )}
+                    >
+                      {!isSidebarCollapsed ? (
+                        <p className="px-5 pb-1.5 text-[11.5px] leading-5 font-medium tracking-[0.01em] text-slate-400/95">
+                          {group.title}
+                        </p>
+                      ) : null}
 
                       <div>
                         {group.items.map((item) => (
-                          <DashboardSidebarLink key={item.key} item={item} />
+                          <DashboardSidebarLink
+                            key={item.key}
+                            item={item}
+                            collapsed={isSidebarCollapsed}
+                          />
                         ))}
                       </div>
                     </section>
                   ))}
 
-                  <div className="mx-4 mt-3 border-t border-white/40 pt-2">
+                  <div
+                    className={cn(
+                      "mx-4 mt-3 border-t border-white/40 pt-2",
+                      isSidebarCollapsed && "mx-2.5 mt-2.5",
+                    )}
+                  >
                     {dashboardUtilityItems.map((item) => (
-                      <DashboardSidebarLink key={item.key} item={item} />
+                      <DashboardSidebarLink
+                        key={item.key}
+                        item={item}
+                        collapsed={isSidebarCollapsed}
+                      />
                     ))}
                   </div>
                 </div>
               </div>
 
-              <div className="border-t border-white/45 px-4 py-2.5">
+              <div
+                className={cn(
+                  "border-t border-white/45 px-4 py-2.5",
+                  isSidebarCollapsed && "px-2.5",
+                )}
+              >
                 <button
                   type="button"
-                  title={dashboardSidebarChrome.collapseLabel}
-                  className="glass-chip grid size-8 place-items-center rounded-[10px] text-slate-600 transition-transform hover:-translate-y-0.5 hover:text-slate-900"
+                  title={
+                    isSidebarCollapsed
+                      ? dashboardSidebarChrome.expandLabel
+                      : dashboardSidebarChrome.collapseLabel
+                  }
+                  aria-label={
+                    isSidebarCollapsed
+                      ? dashboardSidebarChrome.expandLabel
+                      : dashboardSidebarChrome.collapseLabel
+                  }
+                  onClick={() =>
+                    setIsSidebarCollapsed((currentValue) => !currentValue)
+                  }
+                  className={cn(
+                    "glass-chip hidden size-8 place-items-center rounded-[10px] text-slate-600 transition-[transform,color] hover:-translate-y-0.5 hover:text-slate-900 lg:grid",
+                    isSidebarCollapsed && "mx-auto",
+                  )}
                 >
-                  <SidebarActionIcon className="size-[16px]" strokeWidth={1.9} />
+                  <SidebarActionIcon
+                    className={cn(
+                      "size-[16px] transition-transform duration-200",
+                      isSidebarCollapsed && "rotate-180",
+                    )}
+                    strokeWidth={1.9}
+                  />
                 </button>
               </div>
             </div>
@@ -206,18 +296,25 @@ export function DashboardLayout({ data }: { data: DashboardPageData }) {
 function DashboardSidebarLink({
   item,
   prominent = false,
+  collapsed = false,
 }: {
   item: DashboardNavItem;
   prominent?: boolean;
+  collapsed?: boolean;
 }) {
   const Icon = item.icon;
 
   return (
     <NavLink
       to={item.href}
+      aria-label={collapsed ? item.label : undefined}
+      title={collapsed ? item.label : undefined}
       className={({ isActive }) =>
         cn(
-          "group relative mx-2.5 flex min-h-[42px] items-center gap-3 rounded-[9px] px-4 py-2.5 text-[14px] leading-[22px] transition-all duration-150",
+          "group relative mx-2.5 flex min-h-[42px] items-center rounded-[9px] py-2.5 transition-all duration-150",
+          collapsed
+            ? "justify-center px-0 lg:mx-2"
+            : "gap-3 px-4 text-[14px] leading-[22px]",
           isActive
             ? "glass-sidebar-link-active text-slate-900"
             : prominent
@@ -235,14 +332,20 @@ function DashboardSidebarLink({
             )}
             strokeWidth={1.95}
           />
-          <span
-            className={cn(
-              "truncate tracking-tight",
-              isActive ? "font-medium text-slate-900" : "font-normal text-slate-600",
-            )}
-          >
-            {item.label}
-          </span>
+          {collapsed ? (
+            <span className="sr-only">{item.label}</span>
+          ) : (
+            <span
+              className={cn(
+                "truncate tracking-tight",
+                isActive
+                  ? "font-medium text-slate-900"
+                  : "font-normal text-slate-600",
+              )}
+            >
+              {item.label}
+            </span>
+          )}
         </>
       )}
     </NavLink>

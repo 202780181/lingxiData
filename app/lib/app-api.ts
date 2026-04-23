@@ -28,6 +28,10 @@ export class AppApiError extends Error {
   }
 }
 
+export function isAppApiError(error: unknown): error is AppApiError {
+  return error instanceof AppApiError;
+}
+
 const APP_API_BASE_PATH = "/api/v1/app";
 
 export async function appApiFetch<T>(
@@ -75,6 +79,11 @@ export interface RegisterEmailCodePayload {
   email: string;
 }
 
+export interface CreateOnboardingWorkspacePayload {
+  name: string;
+  slug?: string;
+}
+
 export interface LoginCaptchaResponse {
   token: string;
   image_data_url: string;
@@ -104,6 +113,11 @@ export interface LoginResponse {
   [key: string]: unknown;
 }
 
+export interface CurrentUserResponse {
+  session: LoginSession;
+  [key: string]: unknown;
+}
+
 export interface RegisterEmailCodeResponse {
   cooldown_seconds?: number;
   debug_code?: string;
@@ -124,6 +138,55 @@ export interface RegisterResponse {
   [key: string]: unknown;
 }
 
+export interface CreateOnboardingWorkspaceResponse {
+  workspace_id?: string;
+  tenant_id?: string;
+  slug?: string;
+  [key: string]: unknown;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isLoginSession(value: unknown): value is LoginSession {
+  return (
+    isRecord(value) &&
+    typeof value.session_id === "string" &&
+    typeof value.user_id === "string" &&
+    typeof value.email === "string" &&
+    typeof value.name === "string" &&
+    typeof value.onboarding_required === "boolean" &&
+    (value.active_tenant_id === null ||
+      typeof value.active_tenant_id === "string") &&
+    (value.active_role === null ||
+      value.active_role === "owner" ||
+      value.active_role === "member") &&
+    Array.isArray(value.platform_roles)
+  );
+}
+
+function normalizeAuthSessionResponse(
+  payload: unknown,
+): CurrentUserResponse | LoginResponse {
+  if (isRecord(payload) && isLoginSession(payload.session)) {
+    return payload as CurrentUserResponse | LoginResponse;
+  }
+
+  if (isLoginSession(payload)) {
+    return {
+      session: payload,
+    };
+  }
+
+  throw new AppApiError({
+    message: "用户信息响应格式不正确，请稍后重试。",
+    status: 200,
+    code: "INVALID_AUTH_PAYLOAD",
+    data: payload,
+  });
+}
+
 export function requestRegisterEmailCode(payload: RegisterEmailCodePayload) {
   return appApiFetch<RegisterEmailCodeResponse>("/auth/register/email-code", {
     method: "POST",
@@ -138,10 +201,28 @@ export function getLoginCaptcha() {
 }
 
 export function loginUser(payload: LoginPayload) {
-  return appApiFetch<LoginResponse>("/auth/login", {
+  return appApiFetch<unknown>("/auth/login", {
     method: "POST",
     body: JSON.stringify(payload),
-  });
+  }).then(normalizeAuthSessionResponse);
+}
+
+export function getCurrentUser() {
+  return appApiFetch<unknown>("/auth/me", {
+    method: "GET",
+  }).then(normalizeAuthSessionResponse);
+}
+
+export function createOnboardingWorkspace(
+  payload: CreateOnboardingWorkspacePayload,
+) {
+  return appApiFetch<CreateOnboardingWorkspaceResponse>(
+    "/onboarding/workspace",
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+  );
 }
 
 export function registerUser(payload: RegisterPayload) {
