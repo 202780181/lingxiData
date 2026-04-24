@@ -16,9 +16,11 @@ import {
   Sun,
   UserRound,
   Workflow,
+  Zap,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 
+import { dispatchMembershipUpgradeEvent } from "@/lib/app-api-events";
 import { getLoginBypassHref } from "@/lib/auth-redirect";
 import { cn } from "@/lib/utils";
 
@@ -92,19 +94,20 @@ export function DashboardUserMenu({
             className="z-50 outline-none"
           >
             <Menu.Popup className={userMenuPopupClassName}>
-              <Menu.Group className="py-1">
-                <div className="mx-1 flex flex-nowrap items-center py-1.5 pr-2 pl-3">
-                  <div className="min-w-0 grow">
-                    <div className="truncate text-[14px] leading-5 font-medium text-[#101828] dark:text-slate-100">
-                      {user.name}
-                    </div>
-                    <div className="truncate text-[11px] leading-[17px] font-normal text-[#667085] dark:text-slate-400">
-                      {user.email}
-                    </div>
-                  </div>
-                  <AvatarBadge initials={initials} avatarUrl={user.avatarUrl} />
-                </div>
+              <UserMenuAccountPanel
+                user={user}
+                initials={initials}
+                onUpgrade={() => {
+                  setOpen(false);
+                  window.setTimeout(() => {
+                    dispatchMembershipUpgradeEvent(
+                      "升级会员后可获得更高额度和更多经营分析能力。",
+                    );
+                  }, 0);
+                }}
+              />
 
+              <Menu.Group className="py-1">
                 <Menu.Item
                   onClick={() => {
                     setOpen(false);
@@ -210,6 +213,67 @@ export function DashboardUserMenu({
         </Menu.Portal>
       </Menu.Root>
     </>
+  );
+}
+
+function UserMenuAccountPanel({
+  user,
+  initials,
+  onUpgrade,
+}: {
+  user: DashboardUserMenuUser;
+  initials: string;
+  onUpgrade: () => void;
+}) {
+  return (
+    <div className="px-3 pb-2.5 pt-3">
+      <div className="flex items-center gap-2.5">
+        <AvatarBadge
+          initials={initials}
+          avatarUrl={user.avatarUrl}
+          className="size-9 text-[15px]"
+        />
+        <div className="min-w-0">
+          <div className="truncate text-[16px] leading-5 font-semibold text-[#242424] dark:text-slate-50">
+            {user.name}
+          </div>
+          <div className="mt-0.5 truncate text-[13px] leading-[18px] font-normal text-[#a3a3a3] dark:text-slate-400">
+            {user.email}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-3 border-t border-[#e8e8e8] pt-3 dark:border-white/10">
+        <button
+          type="button"
+          className="flex w-full items-center gap-1.5 rounded-[10px] text-left outline-none transition-colors hover:text-[#111111] focus-visible:ring-2 focus-visible:ring-[#2f69f5]/25 dark:hover:text-slate-50"
+          onClick={onUpgrade}
+        >
+          <span className="min-w-0 grow text-[16px] leading-5 font-normal text-[#242424] dark:text-slate-100">
+            Free
+          </span>
+          <Zap
+            className="size-4 shrink-0 fill-[#737373] text-[#737373] dark:fill-slate-400 dark:text-slate-400"
+            strokeWidth={0}
+          />
+          <span className="text-[16px] leading-5 font-normal text-[#6f6f6f] dark:text-slate-300">
+            80
+          </span>
+          <ChevronRight
+            className="size-4 shrink-0 text-[#7a7a7a] dark:text-slate-400"
+            strokeWidth={2.2}
+          />
+        </button>
+
+        <button
+          type="button"
+          className="mt-3 flex h-9 w-full items-center justify-center rounded-[11px] bg-[#2b2b2b] px-3 text-[15px] leading-5 font-normal text-white outline-none transition-colors hover:bg-[#1f1f1f] focus-visible:ring-2 focus-visible:ring-[#2f69f5]/25 dark:bg-white dark:text-[#111111] dark:hover:bg-slate-100"
+          onClick={onUpgrade}
+        >
+          升级
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -368,12 +432,19 @@ function UserMenuRowContent({
 function AvatarBadge({
   initials,
   avatarUrl,
+  className,
 }: {
   initials: string;
   avatarUrl?: string | null;
+  className?: string;
 }) {
   return (
-    <div className="relative inline-flex size-8 shrink-0 select-none items-center justify-center overflow-hidden rounded-full bg-[#155eef] text-[14px] font-medium text-white">
+    <div
+      className={cn(
+        "relative inline-flex size-8 shrink-0 select-none items-center justify-center overflow-hidden rounded-full bg-[#155eef] text-[14px] font-medium text-white",
+        className,
+      )}
+    >
       {avatarUrl ? (
         <img
           src={avatarUrl}

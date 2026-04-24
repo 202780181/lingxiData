@@ -1,3 +1,5 @@
+import { dispatchQuotaExceededEvent } from "@/lib/app-api-events";
+
 export interface AppApiEnvelope<T> {
   code: string;
   message: string;
@@ -64,12 +66,22 @@ export async function appApiFetch<T>(
   }
 
   if (!response.ok || payload.code !== "OK") {
-    throw new AppApiError({
+    const error = new AppApiError({
       message: payload.message || "请求失败，请稍后重试。",
       status: response.status,
       code: payload.code || "UNKNOWN_ERROR",
       data: payload.data,
     });
+
+    if (error.code === "QUOTA_EXCEEDED") {
+      dispatchQuotaExceededEvent({
+        message: error.message,
+        status: error.status,
+        data: error.data,
+      });
+    }
+
+    throw error;
   }
 
   return payload.data as T;
@@ -82,6 +94,12 @@ export interface RegisterEmailCodePayload {
 export interface CreateOnboardingWorkspacePayload {
   name: string;
   slug?: string;
+}
+
+export type WorkspaceSubscriptionPlanCode = "plus" | "pro" | "enterprise";
+
+export interface ChangeWorkspaceSubscriptionPayload {
+  plan_code: WorkspaceSubscriptionPlanCode;
 }
 
 export interface LoginCaptchaResponse {
@@ -166,6 +184,13 @@ export interface WorkspaceUsageItem {
 
 export interface WorkspaceUsageResponse {
   items: WorkspaceUsageItem[];
+}
+
+export interface ChangeWorkspaceSubscriptionResponse {
+  plan_code?: string;
+  plan_name?: string;
+  subscription_status?: string | null;
+  [key: string]: unknown;
 }
 
 export type WorkspaceAccountStatus = "active" | "disabled" | "archived";
@@ -386,6 +411,18 @@ export function getWorkspaceUsage() {
   return appApiFetch<WorkspaceUsageResponse>("/workspace/usage", {
     method: "GET",
   });
+}
+
+export function changeWorkspaceSubscription(
+  payload: ChangeWorkspaceSubscriptionPayload,
+) {
+  return appApiFetch<ChangeWorkspaceSubscriptionResponse>(
+    "/workspace/subscription/change",
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+  );
 }
 
 export function getWorkspaceAccounts() {

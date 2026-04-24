@@ -9,6 +9,7 @@ import {
   useLocation,
 } from "react-router";
 
+import { QuotaUpgradeDialogProvider } from "@/components/billing/quota-upgrade-dialog";
 import { getCurrentUser, isAppApiError } from "@/lib/app-api";
 import {
   buildLocationHref,
@@ -85,7 +86,11 @@ export default function App() {
     );
   }, [location.hash, location.pathname, location.search]);
 
-  return <Outlet />;
+  return (
+    <QuotaUpgradeDialogProvider>
+      <Outlet />
+    </QuotaUpgradeDialogProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
