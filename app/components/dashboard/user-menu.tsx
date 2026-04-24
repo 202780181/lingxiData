@@ -15,6 +15,7 @@ import {
   Sparkles,
   Sun,
   UserRound,
+  Workflow,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 
@@ -47,12 +48,17 @@ export interface DashboardUserMenuUser {
 
 interface DashboardUserMenuProps {
   user: DashboardUserMenuUser;
+  workspace?: {
+    name: string;
+    space?: string;
+  };
   onOpenSettings: () => void;
   onOpenAccount: () => void;
 }
 
 export function DashboardUserMenu({
   user,
+  workspace,
   onOpenSettings,
   onOpenAccount,
 }: DashboardUserMenuProps) {
@@ -122,6 +128,28 @@ export function DashboardUserMenu({
                 >
                   <UserMenuRowContent icon={Settings} label="设置" />
                 </Menu.Item>
+                <Menu.Item
+                  onClick={() => {
+                    setOpen(false);
+                    navigate("/workspace-onboarding");
+                  }}
+                  className={userMenuItemClassName}
+                >
+                  <UserMenuRowContent
+                    icon={Workflow}
+                    label={
+                      <span className="flex min-w-0 flex-col">
+                        <span className="truncate">工作区</span>
+                        {workspace?.name ? (
+                          <span className="truncate text-[11px] leading-4 text-[#667085] dark:text-slate-400">
+                            {workspace.name}
+                          </span>
+                        ) : null}
+                      </span>
+                    }
+                  />
+                </Menu.Item>
+
               </Menu.Group>
 
               <Menu.Separator className={userMenuSeparatorClassName} />
@@ -524,7 +552,7 @@ const userMenuPopupClassName = cn(
 );
 
 const userMenuItemClassName = cn(
-  "mx-1 flex h-[30px] cursor-pointer select-none items-center gap-1 rounded-[10px] px-2 outline-none",
+  "mx-1 flex min-h-[30px] cursor-pointer select-none items-center gap-1 rounded-[10px] px-2 py-1 outline-none",
   "data-[highlighted]:bg-[#f2f4f7] data-[disabled]:cursor-not-allowed data-[disabled]:opacity-30",
   "dark:data-[highlighted]:bg-white/8",
 );

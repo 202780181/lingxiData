@@ -145,6 +145,156 @@ export interface CreateOnboardingWorkspaceResponse {
   [key: string]: unknown;
 }
 
+export interface WorkspaceEntitlement {
+  plan_code: string;
+  plan_name: string;
+  enabled_features: string[];
+  quota_limits: { quota_key: string; limit: number | null }[];
+  subscription_status: string | null;
+}
+
+export interface WorkspaceUsageItem {
+  usage_key: string;
+  period: string;
+  limit: number | null;
+  used: number;
+  reserved: number;
+  remaining: number | null;
+  period_start: string;
+  period_end: string;
+}
+
+export interface WorkspaceUsageResponse {
+  items: WorkspaceUsageItem[];
+}
+
+export type WorkspaceAccountStatus = "active" | "disabled" | "archived";
+export type WorkspaceAccountAuthState =
+  | "unknown"
+  | "authenticated"
+  | "login_required"
+  | "expired";
+
+export interface WorkspaceAccount {
+  account_id: string;
+  tenant_id: string;
+  platform: string;
+  external_account_id: string;
+  display_name: string;
+  status: WorkspaceAccountStatus;
+  auth_state: WorkspaceAccountAuthState;
+  worker_id: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface WorkspaceAccountsResponse {
+  items: WorkspaceAccount[];
+}
+
+export interface StartXhsLoginSessionPayload {
+  display_name: string;
+  platform?: "xiaohongshu";
+}
+
+export interface XhsLoginQrCode {
+  timeout: string;
+  is_logged_in: boolean;
+  image: string | null;
+}
+
+export interface XhsLoginSessionResponse {
+  account: WorkspaceAccount;
+  worker_id: string;
+  qrcode: XhsLoginQrCode;
+}
+
+export interface XhsLoginStatusResponse {
+  account: WorkspaceAccount;
+  worker_id: string | null;
+  is_logged_in: boolean;
+  username: string | null;
+}
+
+export type DashboardAccountDataState =
+  | "ready"
+  | "no_data"
+  | "login_required"
+  | "sync_failed"
+  | "unknown";
+
+export interface DashboardXhsAccount {
+  account_id: string;
+  display_name: string;
+  platform: string;
+  status: string;
+  auth_state: string;
+  worker_id: string | null;
+  avatar_url: string | null;
+  nickname: string | null;
+  profile_url: string | null;
+  last_synced_at: string | null;
+  has_metrics: boolean;
+  data_state: DashboardAccountDataState;
+}
+
+export interface DashboardXhsAccountsResponse {
+  items: DashboardXhsAccount[];
+}
+
+export type DashboardState =
+  | "ready"
+  | "no_accounts"
+  | "no_data"
+  | "sync_pending"
+  | "partial_data"
+  | "login_required"
+  | "sync_failed";
+
+export interface DashboardOverviewSummary {
+  followers_total: number | null;
+  followers_delta: number | null;
+  likes_total: number | null;
+  likes_delta: number | null;
+  collects_total: number | null;
+  collects_delta: number | null;
+  comments_total: number | null;
+  comments_delta: number | null;
+}
+
+export interface DashboardOverviewResponse {
+  dashboard_state: DashboardState;
+  scope: {
+    scope_type: "all_accounts" | "single_account";
+    account_id: string | null;
+  };
+  summary: DashboardOverviewSummary | null;
+  comparison: {
+    current_date: string;
+    previous_date: string;
+    timezone: string;
+  };
+  available_actions: string[];
+  generated_at: string;
+  last_synced_at: string | null;
+  account_count: number;
+  accounts_with_data_count: number;
+  accounts_requiring_login_count: number;
+}
+
+export interface DashboardSyncRun {
+  sync_run_id: string;
+  account_id: string;
+  job_id: string;
+  status: "pending" | "running" | "succeeded" | "failed" | "canceled";
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface DashboardSyncRunsResponse {
+  items: DashboardSyncRun[];
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
@@ -221,6 +371,76 @@ export function createOnboardingWorkspace(
     {
       method: "POST",
       body: JSON.stringify(payload),
+    },
+  );
+}
+
+export function getWorkspaceEntitlements() {
+  return appApiFetch<WorkspaceEntitlement>(
+    "/workspace/entitlements",
+    { method: "GET" },
+  );
+}
+
+export function getWorkspaceUsage() {
+  return appApiFetch<WorkspaceUsageResponse>("/workspace/usage", {
+    method: "GET",
+  });
+}
+
+export function getWorkspaceAccounts() {
+  return appApiFetch<WorkspaceAccountsResponse>("/workspace/accounts", {
+    method: "GET",
+  });
+}
+
+export function startXhsAccountLoginSession(
+  payload: StartXhsLoginSessionPayload,
+) {
+  return appApiFetch<XhsLoginSessionResponse>(
+    "/workspace/xhs-accounts/login-sessions",
+    {
+      method: "POST",
+      body: JSON.stringify({ platform: "xiaohongshu", ...payload }),
+    },
+  );
+}
+
+export function getXhsAccountLoginStatus(accountId: string) {
+  return appApiFetch<XhsLoginStatusResponse>(
+    `/workspace/xhs-accounts/${encodeURIComponent(accountId)}/login-status`,
+    { method: "GET" },
+  );
+}
+
+export function getDashboardXhsAccounts() {
+  return appApiFetch<DashboardXhsAccountsResponse>(
+    "/workspace/dashboard/xhs-accounts",
+    {
+      method: "GET",
+    },
+  );
+}
+
+export function getDashboardXhsOverview(accountId?: string | null) {
+  const query = accountId
+    ? `?account_id=${encodeURIComponent(accountId)}`
+    : "";
+
+  return appApiFetch<DashboardOverviewResponse>(
+    `/workspace/dashboard/xhs-overview${query}`,
+    {
+      method: "GET",
+    },
+  );
+}
+
+export function createDashboardXhsSyncRun(accountId: string | null) {
+  return appApiFetch<DashboardSyncRunsResponse>(
+    "/workspace/dashboard/xhs-sync-runs",
+    {
+      method: "POST",
+      body: JSON.stringify({ account_id: accountId }),
     },
   );
 }

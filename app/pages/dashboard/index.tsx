@@ -10,12 +10,14 @@ import {
 } from "react-router";
 
 import { DashboardProfileDialog } from "@/components/dashboard/dashboard-profile-dialog";
+import { HomeDashboard } from "@/components/dashboard/home-dashboard";
+import { XhsAccountsPage } from "@/components/dashboard/xhs-accounts-page";
 import { DashboardUserMenu } from "@/components/dashboard/user-menu";
 import { DashboardSettingsDialog } from "@/components/dashboard/dashboard-settings-dialog";
 import { cn } from "@/lib/utils";
 import {
+  type DashboardIconHandle,
   dashboardNavGroups,
-  dashboardPrimaryItem,
   dashboardSidebarChrome,
   dashboardUtilityItems,
   type DashboardNavItem,
@@ -124,12 +126,12 @@ export function DashboardLayout({ data }: { data: DashboardPageData }) {
   }, [isSidebarCollapsed]);
 
   return (
-    <main className="glass-layout-bg flex h-svh flex-col overflow-hidden text-slate-950 dark:text-slate-100">
-      <div className="flex min-h-0 flex-1 flex-col gap-[var(--app-shell-gap)] px-3 pb-3 pt-0 lg:px-4 lg:pb-4 lg:pt-0">
-        <header className="glass-topbar -mx-3 flex shrink-0 flex-col gap-2.5 rounded-none px-4 py-2 lg:-mx-4 lg:h-[var(--app-topbar-height)] lg:flex-row lg:items-center lg:justify-between lg:px-5">
+    <main className="flex h-svh flex-col overflow-hidden bg-[var(--dashboard-panel)] text-[var(--dashboard-foreground)]">
+      <div className="flex min-h-0 flex-1 flex-col gap-0 px-0 pb-0 pt-0">
+        <header className="flex shrink-0 flex-col gap-2.5 border-b border-[var(--dashboard-border)] bg-[var(--dashboard-panel)] px-4 py-2 shadow-[var(--dashboard-card-shadow)] lg:h-[var(--app-topbar-height)] lg:flex-row lg:items-center lg:justify-between lg:px-5">
           <div className="flex min-w-0 items-center gap-3.5">
             <div className="flex min-w-0 items-center gap-2 pr-1">
-              <div className="grid size-8 shrink-0 place-items-center rounded-[11px] bg-[linear-gradient(135deg,#586dff_0%,#22c3ff_48%,#2dd4bf_100%)] shadow-[0_12px_26px_rgba(71,114,255,0.24)]">
+              <div className="grid size-8 shrink-0 place-items-center rounded-[10px] bg-blue-600 shadow-[var(--dashboard-card-shadow)]">
                 <div className="flex items-end gap-[2px]">
                   <span className="h-3 w-1.5 rounded-full bg-white/92" />
                   <span className="h-4.5 w-1.5 rounded-full bg-white/78" />
@@ -138,7 +140,7 @@ export function DashboardLayout({ data }: { data: DashboardPageData }) {
               </div>
 
               <div className="min-w-0">
-                <p className="truncate text-[14px] font-semibold tracking-[-0.02em] text-slate-900 dark:text-slate-100">
+                <p className="truncate text-[14px] font-semibold tracking-[-0.02em] text-[var(--dashboard-foreground)]">
                   灵犀数据
                 </p>
               </div>
@@ -147,9 +149,9 @@ export function DashboardLayout({ data }: { data: DashboardPageData }) {
             <form
               role="search"
               onSubmit={(event) => event.preventDefault()}
-              className="glass-search-field hidden h-[var(--app-control-height-lg)] min-w-[var(--app-search-width-min)] max-w-[560px] flex-1 items-center gap-2 rounded-[var(--app-radius-panel)] px-3 py-1 text-left lg:flex"
+              className="hidden h-[var(--app-control-height-lg)] min-w-[var(--app-search-width-min)] max-w-[560px] flex-1 items-center gap-2 rounded-[12px] border border-[var(--dashboard-border)] bg-[var(--dashboard-panel-muted)] px-3 py-1 text-left shadow-[var(--dashboard-card-shadow)] lg:flex"
             >
-              <div className="grid size-6 shrink-0 place-items-center rounded-[8px] bg-white/72 text-slate-500 shadow-[inset_0_1px_0_rgba(255,255,255,0.88)] dark:bg-white/5 dark:text-slate-400 dark:shadow-none">
+              <div className="grid size-6 shrink-0 place-items-center rounded-[8px] bg-[var(--dashboard-panel)] text-[var(--dashboard-muted)]">
                 <Search className="size-3.5" strokeWidth={2} />
               </div>
 
@@ -157,12 +159,12 @@ export function DashboardLayout({ data }: { data: DashboardPageData }) {
                 type="search"
                 aria-label="搜索达人、视频或品牌"
                 placeholder="搜索达人、视频或品牌"
-                className="glass-search-input min-w-0 flex-1 bg-transparent text-[14px] leading-5 font-medium text-slate-700 placeholder:text-slate-500 dark:text-slate-100 dark:placeholder:text-slate-500"
+                className="min-w-0 flex-1 bg-transparent text-[14px] leading-5 font-medium text-[var(--dashboard-foreground)] outline-none placeholder:text-[var(--dashboard-muted)]"
               />
 
-              <div className="glass-chip pointer-events-none hidden items-center gap-1 rounded-[7px] border-white/55 px-1.5 py-0.5 text-[10px] font-medium tracking-[0.02em] text-slate-400 dark:border-white/10 dark:text-slate-500 xl:flex">
+              <div className="pointer-events-none hidden items-center gap-1 rounded-[7px] border border-[var(--dashboard-border)] bg-[var(--dashboard-panel)] px-1.5 py-0.5 text-[10px] font-medium tracking-[0.02em] text-[var(--dashboard-muted-soft)] xl:flex">
                 <span>Ctrl</span>
-                <span className="text-slate-300 dark:text-slate-600">+</span>
+                <span className="text-[var(--dashboard-border-strong)]">+</span>
                 <span>K</span>
               </div>
             </form>
@@ -171,21 +173,22 @@ export function DashboardLayout({ data }: { data: DashboardPageData }) {
           <div className="flex flex-wrap items-center gap-2.5 text-sm lg:ml-5 lg:flex-nowrap">
             <button
               type="button"
-              className="glass-chip grid size-8 place-items-center rounded-[var(--app-radius-control)] text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+              className="grid size-8 place-items-center rounded-[var(--app-radius-control)] border border-[var(--dashboard-border)] bg-[var(--dashboard-panel)] text-[var(--dashboard-muted)] shadow-[var(--dashboard-card-shadow)] transition-colors hover:bg-[var(--dashboard-panel-muted)] hover:text-[var(--dashboard-foreground)]"
             >
               <BookOpen className="size-4" strokeWidth={2} />
             </button>
 
             <button
               type="button"
-              className="glass-chip grid size-8 place-items-center rounded-[var(--app-radius-control)] text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+              className="grid size-8 place-items-center rounded-[var(--app-radius-control)] border border-[var(--dashboard-border)] bg-[var(--dashboard-panel)] text-[var(--dashboard-muted)] shadow-[var(--dashboard-card-shadow)] transition-colors hover:bg-[var(--dashboard-panel-muted)] hover:text-[var(--dashboard-foreground)]"
             >
               <Bell className="size-4" strokeWidth={2} />
             </button>
 
-            <div className="flex items-center lg:border-l lg:border-white/35 lg:pl-4 dark:lg:border-white/10">
+            <div className="flex items-center lg:border-l lg:border-[var(--dashboard-border)] lg:pl-4">
               <DashboardUserMenu
                 user={profile}
+                workspace={data.workspace}
                 onOpenAccount={() => setIsAccountOpen(true)}
                 onOpenSettings={() => setIsSettingsOpen(true)}
               />
@@ -193,29 +196,22 @@ export function DashboardLayout({ data }: { data: DashboardPageData }) {
           </div>
         </header>
 
-        <div className="flex min-h-0 flex-1 flex-col gap-3 lg:flex-row">
+        <div className="flex min-h-0 flex-1 flex-col gap-0 lg:flex-row">
           <aside
             className={cn(
-              "w-full shrink-0 transition-[width] duration-200 lg:overflow-hidden",
+              "w-full shrink-0 border-r border-[var(--dashboard-border)] bg-[var(--dashboard-panel-muted)] transition-[width] duration-200 lg:overflow-hidden",
               isSidebarCollapsed
                 ? "lg:w-[var(--app-sidebar-width-collapsed)]"
                 : "lg:w-[var(--app-sidebar-width)]",
             )}
           >
-            <div className="glass-sidebar flex h-full flex-col overflow-hidden rounded-[var(--app-radius-panel)] border-white/55 bg-[linear-gradient(180deg,rgba(255,255,255,0.7),rgba(244,248,255,0.54))] shadow-[0_22px_56px_rgba(135,151,181,0.16)] dark:border-white/10 dark:bg-[linear-gradient(180deg,oklch(0.205_0_0/0.98),oklch(0.205_0_0/0.95))] dark:shadow-[0_18px_40px_rgba(0,0,0,0.28)]">
+            <div className="flex h-full flex-col overflow-hidden bg-[var(--dashboard-panel-muted)]">
               <div className="sidebar-scroll-area min-h-0 flex-1 overflow-y-auto">
                 <div
                   className={cn(
-                    "py-3",
                     isSidebarCollapsed ? "lg:px-2" : "px-0",
                   )}
                 >
-                  <DashboardSidebarLink
-                    item={dashboardPrimaryItem}
-                    prominent
-                    collapsed={isSidebarCollapsed}
-                  />
-
                   {dashboardNavGroups.map((group) => (
                     <section
                       key={group.title}
@@ -245,7 +241,7 @@ export function DashboardLayout({ data }: { data: DashboardPageData }) {
                   {dashboardUtilityItems.length ? (
                     <div
                       className={cn(
-                        "mx-0 mt-4 border-t border-white/40 pt-3 dark:border-white/10",
+                        "mx-0 mt-4 border-t border-[var(--dashboard-border)] pt-3",
                         isSidebarCollapsed && "mt-2.5",
                       )}
                     >
@@ -263,7 +259,7 @@ export function DashboardLayout({ data }: { data: DashboardPageData }) {
 
               <div
                 className={cn(
-                  "border-t border-white/45 px-3 py-2.5 dark:border-white/10",
+                  "border-t border-[var(--dashboard-border)] px-3 py-2.5",
                   isSidebarCollapsed && "px-2.5",
                 )}
               >
@@ -283,7 +279,7 @@ export function DashboardLayout({ data }: { data: DashboardPageData }) {
                     setIsSidebarCollapsed((currentValue) => !currentValue)
                   }
                   className={cn(
-                    "glass-chip hidden size-8 place-items-center rounded-[var(--app-radius-control)] text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 lg:grid",
+                    "hidden size-8 place-items-center rounded-[var(--app-radius-control)] border border-[var(--dashboard-border)] bg-[var(--dashboard-panel)] text-[var(--dashboard-muted)] shadow-[var(--dashboard-card-shadow)] transition-colors hover:bg-[var(--dashboard-panel-muted)] hover:text-[var(--dashboard-foreground)] lg:grid",
                     isSidebarCollapsed && "mx-auto",
                   )}
                 >
@@ -296,14 +292,12 @@ export function DashboardLayout({ data }: { data: DashboardPageData }) {
             </div>
           </aside>
 
-          <section className="relative min-h-0 min-w-0 flex-1 overflow-hidden">
-            <div className="glass-panel-strong shadow-none flex h-full min-h-0 flex-col overflow-hidden rounded-[var(--app-radius-panel)]">
-              <div
-                ref={contentScrollRef}
-                className="min-h-0 flex-1 overflow-y-auto px-4 py-3.5 md:px-5 md:py-4 [scrollbar-width:thin] [scrollbar-color:rgba(148,163,184,0.5)_transparent] [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/60"
-              >
-                <Outlet />
-              </div>
+          <section className="relative min-h-0 min-w-0 flex-1 overflow-hidden bg-[var(--dashboard-panel)] px-3 pb-3 lg:px-4 lg:pb-4">
+            <div
+              ref={contentScrollRef}
+              className="h-full min-h-0 overflow-y-auto bg-[var(--dashboard-panel)] px-0 py-0 [scrollbar-width:thin] [scrollbar-color:rgba(159,158,158,0.5)_transparent] md:px-1 md:py-1 [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[var(--dashboard-muted-soft)]"
+            >
+              <Outlet />
             </div>
           </section>
         </div>
@@ -503,6 +497,7 @@ function DashboardSidebarLink({
   collapsed?: boolean;
 }) {
   const Icon = item.icon;
+  const iconRef = React.useRef<DashboardIconHandle>(null);
   const resolvedPath = useResolvedPath(item.href);
   const isActive = Boolean(
     useMatch({
@@ -518,19 +513,30 @@ function DashboardSidebarLink({
     isActive
       ? "glass-sidebar-link-active text-[rgba(38,36,76,0.88)] dark:text-slate-50"
       : prominent
-        ? "text-[rgba(38,36,76,0.88)] hover:bg-white/38 hover:text-[rgba(38,36,76,0.88)] dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-slate-100"
-        : "text-[rgba(38,36,76,0.88)] hover:bg-white/34 hover:text-[rgba(38,36,76,0.88)] dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-slate-100",
+        ? "text-[rgba(38,36,76,0.88)] hover:bg-slate-100 hover:text-[rgba(38,36,76,0.88)] dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+        : "text-[rgba(38,36,76,0.88)] hover:bg-slate-100 hover:text-[rgba(38,36,76,0.88)] dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100",
   );
+
+  React.useEffect(() => {
+    if (isActive) {
+      void iconRef.current?.startAnimation();
+      return;
+    }
+
+    void iconRef.current?.stopAnimation();
+  }, [isActive]);
+
   const linkContent = (
     <>
       <Icon
+        ref={iconRef}
         className={cn(
-          "size-[15px] shrink-0",
+          "shrink-0",
           isActive
             ? "text-slate-900 dark:text-slate-100"
             : "text-slate-500 dark:text-slate-400",
         )}
-        strokeWidth={2}
+        size={15}
       />
       {collapsed ? (
         <span className="sr-only">{item.label}</span>
@@ -579,12 +585,27 @@ function DashboardSidebarLink({
   }
 
   return (
-    <NavLink to={item.href} className={linkClassName}>
+    <NavLink
+      to={item.href}
+      className={linkClassName}
+    >
       {linkContent}
     </NavLink>
   );
 }
 
-export function DashboardViewPage(_props: { viewKey: string }) {
-  return null;
+export function DashboardViewPage({ viewKey }: { viewKey: string }) {
+  if (viewKey === "home-dashboard") {
+    return <HomeDashboard />;
+  }
+
+  if (viewKey === "xhs-account-management") {
+    return <XhsAccountsPage />;
+  }
+
+  return (
+    <div className="rounded-[16px] border border-[var(--dashboard-border)] bg-[var(--dashboard-panel)] p-5 text-[14px] leading-6 text-[var(--dashboard-muted)] shadow-[var(--dashboard-card-shadow)]">
+      当前模块正在建设中，请先查看首页看板。
+    </div>
+  );
 }
