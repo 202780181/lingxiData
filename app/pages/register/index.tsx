@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle2, LoaderCircle } from "lucide-react";
 import { Link } from "react-router";
 
 import {
+  AuthEmailInput,
   AuthInput,
   AuthMessage,
   AuthPasswordInput,
@@ -49,9 +50,8 @@ export function RegisterPage() {
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [statusMessage, setStatusMessage] = React.useState<string | null>(null);
   const [debugCode, setDebugCode] = React.useState<string | null>(null);
-  const [registeredUser, setRegisteredUser] = React.useState<RegisterResponse | null>(
-    null,
-  );
+  const [registeredUser, setRegisteredUser] =
+    React.useState<RegisterResponse | null>(null);
   const registerName = React.useMemo(() => buildRegisterName(email), [email]);
 
   React.useEffect(() => {
@@ -81,11 +81,14 @@ export function RegisterPage() {
       const result = await requestRegisterEmailCode({ email: email.trim() });
 
       setCooldownSeconds(
-        typeof result.cooldown_seconds === "number" && result.cooldown_seconds > 0
+        typeof result.cooldown_seconds === "number" &&
+          result.cooldown_seconds > 0
           ? result.cooldown_seconds
           : 60,
       );
-      setDebugCode(typeof result.debug_code === "string" ? result.debug_code : null);
+      setDebugCode(
+        typeof result.debug_code === "string" ? result.debug_code : null,
+      );
       setStatusMessage("验证码请求已发送，请查看邮箱后继续注册。");
     } catch (error) {
       setErrorMessage(getAuthErrorMessage(error));
@@ -120,7 +123,9 @@ export function RegisterPage() {
       });
 
       setRegisteredUser(result);
-      setStatusMessage("注册成功。当前注册接口不会自动登录，请继续使用登录页进入系统。");
+      setStatusMessage(
+        "注册成功。当前注册接口不会自动登录，请继续使用登录页进入系统。",
+      );
     } catch (error) {
       setErrorMessage(getAuthErrorMessage(error));
     } finally {
@@ -139,17 +144,20 @@ export function RegisterPage() {
     >
       {registeredUser ? (
         <div className="space-y-4">
-          <div className="rounded-[10px] border border-emerald-200 bg-emerald-50 p-4 text-emerald-950">
+          <div className="rounded-[12px] border border-emerald-200 bg-emerald-50 p-4 text-emerald-950">
             <div className="flex items-start gap-3">
               <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-emerald-600" />
               <div className="space-y-2">
-                <p className="text-[16px] font-semibold">注册成功</p>
-                <p className="text-[13px] leading-6 text-emerald-900/80">
-                  {registeredUser.name || registerName}，你的账号已经创建完成。当前注册接口不会自动登录，请继续前往登录页进入系统。
+                <p className="text-[15px] font-semibold">注册成功</p>
+                <p className="text-[12px] leading-5 text-emerald-900/80">
+                  {registeredUser.name || registerName}
+                  ，你的账号已经创建完成。当前注册接口不会自动登录，请继续前往登录页进入系统。
                 </p>
-                <div className="rounded-[8px] bg-white/80 px-4 py-3 text-[13px] leading-6 text-emerald-900/85">
+                <div className="rounded-[10px] bg-white/80 px-4 py-3 text-[12px] leading-5 text-emerald-900/85">
                   <p>注册邮箱：{registeredUser.email || email}</p>
-                  {registeredUser.user_id ? <p>用户 ID：{registeredUser.user_id}</p> : null}
+                  {registeredUser.user_id ? (
+                    <p>用户 ID：{registeredUser.user_id}</p>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -158,27 +166,26 @@ export function RegisterPage() {
           <div className="flex gap-3">
             <Link
               to="/login"
-              className="inline-flex h-10 flex-1 items-center justify-center rounded-[6px] bg-[#635bff] px-4 text-[14px] font-medium text-white transition-colors hover:bg-[#534cf0]"
+              className="inline-flex h-[var(--app-auth-input-height)] flex-1 items-center justify-center rounded-[var(--app-radius-control)] bg-[#635bff] px-4 text-[14px] font-medium text-white transition-colors hover:bg-[#534cf0]"
             >
               前往登录
             </Link>
             <Link
               to="/"
-              className="inline-flex h-10 flex-1 items-center justify-center rounded-[6px] border border-black/10 bg-white px-4 text-[14px] font-medium text-[#60636b] transition-colors hover:bg-[#fafbff]"
+              className="inline-flex h-[var(--app-auth-input-height)] flex-1 items-center justify-center rounded-[var(--app-radius-control)] border border-black/10 bg-white px-4 text-[14px] font-medium text-[#60636b] transition-colors hover:bg-[#fafbff]"
             >
               返回首页
             </Link>
           </div>
         </div>
       ) : (
-        <form className="space-y-[14px]" onSubmit={handleSubmit}>
-          <AuthInput
-            type="email"
+        <form className="space-y-3" onSubmit={handleSubmit}>
+          <AuthEmailInput
             autoComplete="email"
             aria-label="注册邮箱"
             placeholder="邮箱"
             value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            onValueChange={setEmail}
           />
 
           <AuthInput
@@ -191,18 +198,18 @@ export function RegisterPage() {
             inputClassName="pr-16"
             endAdornment={
               sendingCode ? (
-                <div className="flex size-8 items-center justify-center text-[#a2a4a8]">
+                <div className="flex size-7 items-center justify-center text-[#a2a4a8]">
                   <LoaderCircle className="size-4 animate-spin" />
                 </div>
               ) : cooldownSeconds > 0 ? (
-                <div className="min-w-[38px] text-center text-[12px] font-semibold tabular-nums text-[#8f959e]">
+                <div className="min-w-[38px] text-center text-[11px] font-semibold tabular-nums text-[#8f959e]">
                   {cooldownSeconds}s
                 </div>
               ) : (
                 <button
                   type="button"
                   onClick={handleSendEmailCode}
-                  className="flex size-8 items-center justify-center rounded-[6px] text-[#635bff] transition-colors hover:bg-[#f3f2ff] hover:text-[#534cf0]"
+                  className="flex size-7 items-center justify-center rounded-[8px] text-[#635bff] transition-colors hover:bg-[#f3f2ff] hover:text-[#534cf0]"
                   aria-label="发送邮箱验证码"
                 >
                   <ArrowRight className="size-4" strokeWidth={2.2} />
@@ -236,11 +243,13 @@ export function RegisterPage() {
             </AuthMessage>
           ) : null}
 
-          {errorMessage ? <AuthMessage tone="error">{errorMessage}</AuthMessage> : null}
+          {errorMessage ? (
+            <AuthMessage tone="error">{errorMessage}</AuthMessage>
+          ) : null}
 
           <button
             type="submit"
-            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-[6px] bg-[#635bff] px-4 text-[14px] font-medium text-white transition-colors hover:bg-[#534cf0] disabled:cursor-not-allowed disabled:bg-[#c6c2ff]"
+            className="inline-flex h-[var(--app-auth-input-height)] w-full items-center justify-center gap-2 rounded-[var(--app-radius-control)] bg-[#635bff] px-4 text-[14px] font-medium text-white transition-colors hover:bg-[#534cf0] disabled:cursor-not-allowed disabled:bg-[#c6c2ff]"
             disabled={submitting}
           >
             {submitting ? (

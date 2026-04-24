@@ -7,7 +7,7 @@ export default function DashboardViewRoute() {
   const { view } = useParams();
 
   if (!isDashboardViewKey(view)) {
-    return <Navigate to="/dashboard/model-plaza" replace />;
+    return <Navigate to="/dashboard/home-dashboard" replace />;
   }
 
   return <DashboardViewPage viewKey={view} />;

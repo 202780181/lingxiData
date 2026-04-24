@@ -16,8 +16,10 @@ interface AuthShellProps {
   children: React.ReactNode;
 }
 
-interface AuthInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+interface AuthInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "size"
+> {
   icon?: LucideIcon;
   error?: boolean;
   wrapperClassName?: string;
@@ -25,8 +27,10 @@ interface AuthInputProps
   endAdornment?: React.ReactNode;
 }
 
-interface AuthEmailInputProps
-  extends Omit<AuthInputProps, "type" | "value" | "onChange"> {
+interface AuthEmailInputProps extends Omit<
+  AuthInputProps,
+  "type" | "value" | "onChange"
+> {
   value: string;
   onValueChange: (value: string) => void;
 }
@@ -83,30 +87,30 @@ export function AuthShell({
 
       <Link
         to="/"
-        className="absolute left-5 top-6 z-20 inline-flex items-center gap-3 md:left-[30px] md:top-[30px]"
+        className="absolute left-4 top-5 z-20 inline-flex items-center gap-2.5 md:left-6 md:top-6"
         aria-label="返回首页"
       >
-        <div className="grid size-9 place-items-center rounded-[12px] bg-[linear-gradient(135deg,#586dff_0%,#22c3ff_48%,#2dd4bf_100%)] shadow-[0_12px_26px_rgba(71,114,255,0.22)]">
+        <div className="grid size-8 place-items-center rounded-[10px] bg-[linear-gradient(135deg,#586dff_0%,#22c3ff_48%,#2dd4bf_100%)] shadow-[0_10px_22px_rgba(71,114,255,0.2)]">
           <div className="flex items-end gap-[2px]">
             <span className="h-3 w-1.5 rounded-full bg-white/92" />
             <span className="h-4.5 w-1.5 rounded-full bg-white/78" />
             <span className="h-3.5 w-1.5 rounded-full bg-white/62" />
           </div>
         </div>
-        <span className="text-[20px] font-semibold tracking-[-0.03em] text-[#06061f]">
+        <span className="text-[var(--app-auth-brand-size)] font-semibold tracking-[-0.03em] text-[#06061f]">
           {authBrandName}
         </span>
       </Link>
 
-      <div className="relative mx-auto flex min-h-svh w-full max-w-[1440px] items-center justify-center px-5 py-24 sm:px-8 lg:px-12 xl:px-[88px]">
-        <section className="login-pixso--container__right login-pixso--container__right_oversea relative z-10 w-full max-w-[474px] rounded-[12px] bg-white shadow-[0_8px_16px_rgba(31,19,135,0.04),0_0_2px_rgba(17,30,58,0.2)]">
-          <div className="px-6 py-8 sm:px-[58px] sm:py-[50px]">
-            <div className="oversideSignin-page--wrapper mx-auto w-full max-w-[358px]">
-              <h1 className="oversea-page--title text-center text-[28px] font-semibold leading-[35px] tracking-[-0.02em] text-[#06061f]">
+      <div className="relative mx-auto flex min-h-svh w-full max-w-[1440px] items-center justify-center px-5 py-20 sm:px-8 lg:px-12 xl:px-20">
+        <section className="login-pixso--container__right login-pixso--container__right_oversea relative z-10 w-full max-w-[var(--app-auth-card-width)] rounded-[var(--app-radius-panel)] bg-white shadow-[0_10px_24px_rgba(31,19,135,0.04),0_0_2px_rgba(17,30,58,0.18)]">
+          <div className="px-6 py-7 sm:px-10 sm:py-9">
+            <div className="oversideSignin-page--wrapper mx-auto w-full max-w-[340px]">
+              <h1 className="oversea-page--title text-center text-[var(--app-auth-title-size)] font-semibold leading-[30px] tracking-[-0.02em] text-[#06061f]">
                 {title}
               </h1>
 
-              <div className="oversea-page-tips mt-3 flex items-center justify-center text-[14px] leading-[18px]">
+              <div className="oversea-page-tips mt-2.5 flex items-center justify-center text-[var(--app-auth-helper-size)] leading-5">
                 <span className="text-[#8f959e]">{helperText}</span>
                 <Link
                   to={helperActionTo}
@@ -116,11 +120,11 @@ export function AuthShell({
                 </Link>
               </div>
 
-              <div className="oversea-page-tips-email mt-[14px] text-center text-[14px] leading-5 text-[#8f959e]">
+              <div className="oversea-page-tips-email mt-3 text-center text-[var(--app-auth-helper-size)] leading-5 text-[#8f959e]">
                 {emailHint}
               </div>
 
-              <div className="mt-[14px]">{children}</div>
+              <div className="mt-3.5">{children}</div>
             </div>
           </div>
         </section>
@@ -145,16 +149,18 @@ export const AuthInput = React.forwardRef<HTMLInputElement, AuthInputProps>(
     return (
       <div
         className={cn(
-          "group/auth relative flex h-10 items-center rounded-[8px] border bg-white transition-[border-color,box-shadow,background-color]",
+          "group/auth relative flex h-[var(--app-auth-input-height)] items-center rounded-[var(--app-radius-control)] border bg-white transition-[border-color,box-shadow,background-color]",
           error
             ? "border-rose-300 shadow-[0_0_0_3px_rgba(251,113,133,0.08)]"
             : "border-black/10 hover:border-black/15 focus-within:border-[#635bff] focus-within:shadow-[0_0_0_3px_rgba(99,91,255,0.12)]",
-          disabled ? "cursor-not-allowed bg-[#f7f7fa] opacity-70" : "cursor-text",
+          disabled
+            ? "cursor-not-allowed bg-[#f7f7fa] opacity-70"
+            : "cursor-text",
           wrapperClassName,
         )}
       >
         {Icon ? (
-          <div className="pl-[14px] text-[#a2a4a8] transition-colors group-focus-within/auth:text-[#635bff]">
+          <div className="pl-3.5 text-[#a2a4a8] transition-colors group-focus-within/auth:text-[#635bff]">
             <Icon className="size-4" strokeWidth={1.9} />
           </div>
         ) : null}
@@ -164,15 +170,15 @@ export const AuthInput = React.forwardRef<HTMLInputElement, AuthInputProps>(
           disabled={disabled}
           className={cn(
             "h-full min-w-0 flex-1 bg-transparent text-[14px] leading-5 text-[#06061f] outline-none placeholder:text-[#b0b3bc] disabled:cursor-not-allowed",
-            Icon ? "pl-2.5" : "pl-[14px]",
-            endAdornment ? "pr-11" : "pr-[14px]",
+            Icon ? "pl-2.5" : "pl-3.5",
+            endAdornment ? "pr-10" : "pr-3.5",
             inputClassName,
           )}
           {...props}
         />
 
         {endAdornment ? (
-          <div className="absolute inset-y-0 right-2 flex items-center">
+          <div className="absolute inset-y-0 right-1.5 flex items-center">
             {endAdornment}
           </div>
         ) : null}
@@ -283,7 +289,9 @@ export function AuthEmailInput({
     if (event.key === "ArrowUp") {
       event.preventDefault();
       setIsOpen(true);
-      setActiveIndex((current) => (current - 1 + suggestions.length) % suggestions.length);
+      setActiveIndex(
+        (current) => (current - 1 + suggestions.length) % suggestions.length,
+      );
       return;
     }
 
@@ -324,8 +332,8 @@ export function AuthEmailInput({
       />
 
       {isOpen ? (
-        <div className="absolute inset-x-0 top-[calc(100%+6px)] z-30 overflow-hidden rounded-[10px] border border-black/10 bg-white shadow-[0_14px_32px_rgba(12,18,28,0.12)]">
-          <ul id={listboxId} role="listbox" className="py-1.5">
+        <div className="absolute inset-x-0 top-[calc(100%+4px)] z-30 overflow-hidden rounded-[10px] border border-black/10 bg-white shadow-[0_12px_24px_rgba(12,18,28,0.1)]">
+          <ul id={listboxId} role="listbox" className="py-1">
             {suggestions.map((suggestion, index) => {
               const isActive = index === activeIndex;
 
@@ -337,7 +345,7 @@ export function AuthEmailInput({
                     role="option"
                     aria-selected={isActive}
                     className={cn(
-                      "flex w-full items-center justify-between gap-4 px-3.5 py-2 text-left transition-colors",
+                      "flex w-full items-center justify-between gap-3 px-3 py-1.5 text-left transition-colors",
                       isActive ? "bg-[#f3f2ff]" : "hover:bg-[#f7f7fb]",
                     )}
                     onMouseEnter={() => setActiveIndex(index)}
@@ -349,7 +357,7 @@ export function AuthEmailInput({
                     <span className="min-w-0 truncate text-[14px] font-medium text-[#06061f]">
                       {suggestion.value}
                     </span>
-                    <span className="shrink-0 text-[12px] text-[#8f959e]">
+                    <span className="shrink-0 text-[11px] text-[#8f959e]">
                       {suggestion.label}
                     </span>
                   </button>
@@ -376,7 +384,7 @@ export function AuthPasswordInput(
         <button
           type="button"
           onClick={() => setVisible((current) => !current)}
-          className="flex size-7 items-center justify-center rounded-[6px] text-[#a2a4a8] transition-colors hover:bg-black/[0.04] hover:text-[#60636b]"
+          className="flex size-[26px] items-center justify-center rounded-[6px] text-[#a2a4a8] transition-colors hover:bg-black/[0.04] hover:text-[#60636b]"
           aria-label={visible ? "隐藏密码" : "显示密码"}
         >
           {visible ? (
@@ -425,7 +433,7 @@ export function AuthMessage({
   return (
     <div
       className={cn(
-        "rounded-[8px] border px-3 py-2.5 text-[12px] leading-[18px]",
+        "rounded-[10px] border px-3 py-2 text-[12px] leading-[18px]",
         tone === "error"
           ? "border-rose-200 bg-rose-50 text-rose-900"
           : tone === "success"

@@ -18,8 +18,23 @@ This directory contains guidelines for frontend development. Fill in each file w
 | [Component Guidelines](./component-guidelines.md) | Component patterns, props, composition | To fill |
 | [Hook Guidelines](./hook-guidelines.md) | Custom hooks, data fetching patterns | To fill |
 | [State Management](./state-management.md) | Local state, global state, server state | To fill |
-| [Quality Guidelines](./quality-guidelines.md) | Code standards, forbidden patterns | To fill |
+| [Quality Guidelines](./quality-guidelines.md) | Code standards, forbidden patterns, UI density rules | Active |
 | [Type Safety](./type-safety.md) | Type patterns, validation | To fill |
+
+---
+
+## Pre-Development Checklist
+
+For frontend work, read:
+
+1. [Quality Guidelines](./quality-guidelines.md)
+2. If the task changes shared visual rhythm, also check `app/app.css` and existing auth/dashboard/dialog shells before editing leaf components
+
+For UI density, dialog size, dashboard spacing, or auth layout tasks:
+
+- Start from shared tokens and shared shells
+- Do not begin with one-off dialog or menu overrides
+- Validate light mode and dark mode before finishing
 
 ---
 

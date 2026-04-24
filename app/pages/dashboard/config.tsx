@@ -1,21 +1,14 @@
 import type { ComponentType } from "react";
 import {
-  AudioLines,
-  Bell,
-  Boxes,
-  Camera,
-  ChartNoAxesColumnIncreasing,
-  Clapperboard,
-  Compass,
+  ChartColumnBig,
   Database,
-  KeyRound,
-  MonitorPlay,
-  PanelsTopLeft,
-  Radar,
-  ShieldCheck,
-  SlidersVertical,
-  Type,
-  Waypoints,
+  House,
+  PanelLeftClose,
+  PanelLeftOpen,
+  ScanSearch,
+  SendHorizontal,
+  FilePenLine,
+  UsersRound,
 } from "lucide-react";
 
 type DashboardIcon = ComponentType<{
@@ -24,23 +17,13 @@ type DashboardIcon = ComponentType<{
 }>;
 
 export type DashboardViewKey =
-  | "model-plaza"
-  | "text-model"
-  | "voice-model"
-  | "vision-model"
-  | "multimodal-model"
-  | "data-management"
-  | "model-tuning"
-  | "my-models"
-  | "model-evaluation"
-  | "model-usage"
-  | "batch-inference"
-  | "model-deployment"
-  | "model-monitoring"
-  | "model-alerts"
-  | "quota-management"
-  | "access-management"
-  | "api-key";
+  | "home-dashboard"
+  | "multi-account-analysis"
+  | "competitor-analysis"
+  | "viral-learning-article-generation"
+  | "article-publishing-center"
+  | "account-overview"
+  | "knowledge-base-management";
 
 export interface DashboardNavItem {
   key: DashboardViewKey;
@@ -55,149 +38,78 @@ export interface DashboardNavGroup {
   items: DashboardNavItem[];
 }
 
-export const defaultDashboardViewKey: DashboardViewKey = "model-plaza";
-export const dashboardUtilityGroupTitle = "系统设置";
+export const defaultDashboardViewKey: DashboardViewKey = "home-dashboard";
+export const dashboardUtilityGroupTitle = "";
 
 export const dashboardPrimaryItem: DashboardNavItem = {
-  key: "model-plaza",
-  label: "模型广场",
-  description: "精选模型、能力入口与官方推荐模型市场。",
-  href: "/dashboard/model-plaza",
-  icon: Waypoints,
+  key: "home-dashboard",
+  label: "首页看板",
+  description: "查看平台关键经营数据、重点任务和核心运营总览。",
+  href: "/dashboard/home-dashboard",
+  icon: House,
 };
 
 export const dashboardNavGroups: DashboardNavGroup[] = [
   {
-    title: "模型体验",
+    title: "账号运营",
     items: [
       {
-        key: "text-model",
-        label: "文本模型",
-        description: "文本生成、问答、摘要与脚本创作。",
-        href: "/dashboard/text-model",
-        icon: Type,
+        key: "multi-account-analysis",
+        label: "多账号管理分析",
+        description: "统一查看多账号运营表现、分组情况和协同管理状态。",
+        href: "/dashboard/multi-account-analysis",
+        icon: UsersRound,
       },
       {
-        key: "voice-model",
-        label: "语音模型",
-        description: "语音识别、合成与多轮语音交互。",
-        href: "/dashboard/voice-model",
-        icon: AudioLines,
-      },
-      {
-        key: "vision-model",
-        label: "视觉模型",
-        description: "图像识别、检测与视觉理解。",
-        href: "/dashboard/vision-model",
-        icon: Camera,
-      },
-      {
-        key: "multimodal-model",
-        label: "全模态模型",
-        description: "文本、图像、视频的联合建模能力。",
-        href: "/dashboard/multimodal-model",
-        icon: Clapperboard,
+        key: "account-overview",
+        label: "账号综合分析",
+        description: "查看账号整体表现、内容结构和增长趋势。",
+        href: "/dashboard/account-overview",
+        icon: ChartColumnBig,
       },
     ],
   },
   {
-    title: "模型训练",
+    title: "内容创作",
     items: [
       {
-        key: "data-management",
-        label: "数据管理",
-        description: "数据集、标签、同步链路与资产治理。",
-        href: "/dashboard/data-management",
+        key: "viral-learning-article-generation",
+        label: "爆文生成",
+        description: "基于爆款数据拆解选题，并辅助生成文章内容。",
+        href: "/dashboard/viral-learning-article-generation",
+        icon: FilePenLine,
+      },
+      {
+        key: "knowledge-base-management",
+        label: "知识库管理",
+        description: "管理知识资产、资料沉淀和内容素材库。",
+        href: "/dashboard/knowledge-base-management",
         icon: Database,
       },
       {
-        key: "model-tuning",
-        label: "模型调优",
-        description: "参数调优、实验记录与效果优化。",
-        href: "/dashboard/model-tuning",
-        icon: SlidersVertical,
-      },
-      {
-        key: "my-models",
-        label: "我的模型",
-        description: "自定义模型、版本、发布与部署记录。",
-        href: "/dashboard/my-models",
-        icon: Boxes,
-      },
-      {
-        key: "model-evaluation",
-        label: "模型评测",
-        description: "基准测试、效果对比与质量评分。",
-        href: "/dashboard/model-evaluation",
-        icon: Compass,
+        key: "article-publishing-center",
+        label: "文章发布",
+        description: "集中管理文章发布、分发节奏和发布结果。",
+        href: "/dashboard/article-publishing-center",
+        icon: SendHorizontal,
       },
     ],
   },
   {
-    title: "工作台",
+    title: "数据洞察",
     items: [
       {
-        key: "model-usage",
-        label: "模型用量",
-        description: "查看模型调用趋势、额度消耗与成本分布。",
-        href: "/dashboard/model-usage",
-        icon: ChartNoAxesColumnIncreasing,
-      },
-      {
-        key: "batch-inference",
-        label: "批量推理",
-        description: "围绕大批量任务提交、结果回收与重试管理。",
-        href: "/dashboard/batch-inference",
-        icon: Boxes,
-      },
-      {
-        key: "model-deployment",
-        label: "模型部署",
-        description: "管理模型上线、环境切换与部署策略。",
-        href: "/dashboard/model-deployment",
-        icon: MonitorPlay,
-      },
-      {
-        key: "model-monitoring",
-        label: "模型监控",
-        description: "跟踪可用性、延迟、吞吐与质量波动。",
-        href: "/dashboard/model-monitoring",
-        icon: Radar,
-      },
-      {
-        key: "model-alerts",
-        label: "模型告警",
-        description: "查看告警规则、升级链路与历史异常记录。",
-        href: "/dashboard/model-alerts",
-        icon: Bell,
-      },
-      {
-        key: "quota-management",
-        label: "限流提额",
-        description: "管理速率限制、配额申请与容量策略。",
-        href: "/dashboard/quota-management",
-        icon: SlidersVertical,
+        key: "competitor-analysis",
+        label: "竞品与内容自检",
+        description: "分析竞品内容策略，并对当前内容进行自检评估。",
+        href: "/dashboard/competitor-analysis",
+        icon: ScanSearch,
       },
     ],
   },
 ];
 
-export const dashboardUtilityItems: DashboardNavItem[] = [
-  {
-    key: "access-management",
-    label: "权限管理",
-    description: "成员、角色、空间与访问边界管理。",
-    href: "/dashboard/access-management",
-    icon: ShieldCheck,
-  },
-  {
-    key: "api-key",
-    label: "API Key",
-    description: "密钥创建、轮换与调用控制。",
-    href: "/dashboard/api-key",
-    icon: KeyRound,
-  },
-];
+export const dashboardUtilityItems: DashboardNavItem[] = [];
 
 export const dashboardNavItems = [
   dashboardPrimaryItem,
@@ -234,14 +146,15 @@ export function getDashboardViewGroupTitle(key: DashboardViewKey) {
 }
 
 export const dashboardTopTabs = [
-  { label: "模型服务", href: "/dashboard/model-plaza" },
-  { label: "训练空间", href: "/dashboard/data-management" },
-  { label: "工作台", href: "/dashboard/access-management" },
+  { label: "首页看板", href: "/dashboard/home-dashboard" },
+  { label: "多账号管理分析", href: "/dashboard/multi-account-analysis" },
+  { label: "账号综合分析", href: "/dashboard/account-overview" },
 ] as const;
 
 export const dashboardSidebarChrome = {
   collapseLabel: "收起菜单",
   expandLabel: "展开菜单",
-  collapseIcon: PanelsTopLeft,
+  collapseIcon: PanelLeftClose,
+  expandIcon: PanelLeftOpen,
   systemIcon: Database,
 };

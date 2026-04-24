@@ -24,6 +24,10 @@ Execute these steps:
 
 4. **Read the specific guideline files** listed in the Pre-Development Checklist that are relevant to your task. The index is NOT the goal — it points you to the actual guideline files (e.g., `error-handling.md`, `conventions.md`, `mock-strategies.md`). Read those files to understand the coding standards and patterns.
 
+   **Frontend reminder**:
+   - If the task touches dialogs, menus, auth pages, dashboard chrome, typography, spacing, density, or dark-mode polish, you MUST read `.trellis/spec/frontend/quality-guidelines.md` before editing.
+   - For these tasks, check shared tokens and shells first (`app/app.css`, shared button/dialog/auth/dashboard wrappers). Do not start by resizing one component in isolation.
+
 5. **Always read shared guides**:
    ```bash
    cat .trellis/spec/guides/index.md

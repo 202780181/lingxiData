@@ -36,7 +36,9 @@ export function LoginPage() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [captchaAnswer, setCaptchaAnswer] = React.useState("");
-  const [captcha, setCaptcha] = React.useState<LoginCaptchaResponse | null>(null);
+  const [captcha, setCaptcha] = React.useState<LoginCaptchaResponse | null>(
+    null,
+  );
   const [loadingCaptcha, setLoadingCaptcha] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
@@ -71,7 +73,12 @@ export function LoginPage() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!email.trim() || !password || !captchaAnswer.trim() || !captcha?.token) {
+    if (
+      !email.trim() ||
+      !password ||
+      !captchaAnswer.trim() ||
+      !captcha?.token
+    ) {
       setErrorMessage("请完整填写邮箱、密码和图形验证码。");
       return;
     }
@@ -105,7 +112,7 @@ export function LoginPage() {
       helperActionTo="/register"
       emailHint="或通过邮箱登录"
     >
-      <form className="space-y-3" onSubmit={handleSubmit}>
+      <form className="space-y-2.5" onSubmit={handleSubmit}>
         <AuthEmailInput
           autoComplete="username"
           aria-label="登录邮箱"
@@ -122,7 +129,7 @@ export function LoginPage() {
           onChange={(event) => setPassword(event.target.value)}
         />
 
-        <div className="grid grid-cols-[minmax(0,1fr)_148px] gap-2">
+        <div className="grid grid-cols-[minmax(0,1fr)_148px] gap-1.5">
           <AuthInput
             type="text"
             aria-label="图形验证码"
@@ -134,7 +141,7 @@ export function LoginPage() {
           <button
             type="button"
             onClick={() => void loadCaptcha()}
-            className="group flex h-[32px] w-full self-center items-center justify-center overflow-hidden rounded-[8px] bg-transparent p-0"
+            className="group flex h-[32px] w-full self-center items-center justify-center overflow-hidden rounded-[var(--app-radius-control)] bg-transparent p-0"
             aria-label="刷新图形验证码"
           >
             {loadingCaptcha ? (
@@ -151,11 +158,13 @@ export function LoginPage() {
           </button>
         </div>
 
-        {errorMessage ? <AuthMessage tone="error">{errorMessage}</AuthMessage> : null}
+        {errorMessage ? (
+          <AuthMessage tone="error">{errorMessage}</AuthMessage>
+        ) : null}
 
         <button
           type="submit"
-          className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-[6px] bg-[#635bff] px-4 text-[14px] font-medium text-white transition-colors hover:bg-[#534cf0] disabled:cursor-not-allowed disabled:bg-[#c6c2ff]"
+          className="inline-flex h-[var(--app-auth-input-height)] w-full items-center justify-center gap-2 rounded-[var(--app-radius-control)] bg-[#635bff] px-4 text-[14px] font-medium text-white transition-colors hover:bg-[#534cf0] disabled:cursor-not-allowed disabled:bg-[#c6c2ff]"
           disabled={submitting || loadingCaptcha || !captcha}
         >
           {submitting ? (
@@ -170,7 +179,7 @@ export function LoginPage() {
 
         <button
           type="button"
-          className="mt-[16px] inline-flex w-full items-center justify-center text-[14px] font-medium text-[#635bff] transition-colors hover:text-[#534cf0]"
+          className="mt-3.5 inline-flex w-full items-center justify-center text-[14px] font-medium text-[#635bff] transition-colors hover:text-[#534cf0]"
         >
           忘记密码
         </button>
